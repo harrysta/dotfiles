@@ -44,7 +44,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 PS1="\033[01;32m\]\u@\h:\[\e[33m\]\w\[\e[0m\]\$ "
-
+FZF_DEFAULT_COMMAND="find -L"
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
