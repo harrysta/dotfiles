@@ -1,0 +1,3 @@
+#!/bin/bash
+
+xrandr | grep ' + ' | sed s/*/''/ | awk '{print int($4 + 0.5)}'
