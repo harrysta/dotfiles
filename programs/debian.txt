@@ -8,3 +8,10 @@ htop
 firefox-esr
 python
 stow
+zip
+feh
+picom
+libx11-dev
+libxft-dev
+libxinerama-dev
+ffmpeg
