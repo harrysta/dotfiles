@@ -2,6 +2,6 @@
 
 while  :
 do
-  xsetroot -name " $(bluetoothdevls -p) | $(date +'%H:%M, %a %d/%m/%Y')"
+  xsetroot -name " $(bluetoothdevls -p) | $(date +'%H:%M, %a %d/%m/%Y')"
   sleep 1
 done

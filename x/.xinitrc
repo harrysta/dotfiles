@@ -5,6 +5,7 @@ feh --bg-fill --no-fehbg --randomize $WALLPAPERS
 picom -b
 dwmstatus &
 discord &
-qjackctl start &
+# spotify &
+# qjackctl start &
 
 exec dwm
