@@ -1,0 +1,10 @@
+git
+make
+gcc
+xorg
+tmux
+neovim
+htop
+firefox-esr
+python
+stow
