@@ -1,15 +1,17 @@
 #!/bin/sh
 
-arg="bluetoothctl devices"
+# arg="bluetoothctl devices"
 
-while getopts ":p" opt; do
-  case $opt in 
-    p) arg="bluetoothctl paired-devices"
-      ;;
-    \?)
-      echo "Invalid options: -$OPTARG" >&2
-      ;;
-  esac
-done
+# while getopts ":p" opt; do
+  # case $opt in 
+    # p) arg="bluetoothctl paired-devices"
+      # ;;
+    # \?)
+      # echo "Invalid options: -$OPTARG" >&2
+      # ;;
+  # esac
+# done
 
-${arg} | cut -f2 -d' ' | while read uuid; do bluetoothctl info $uuid; done|grep -e "Name"|awk '{print $2}' | paste -s -d,
+# ${arg} | cut -f2 -d' ' | while read uuid; do bluetoothctl info $uuid; done|grep -e "Name"|awk '{print $2}' | paste -s -d,
+bluetoothctl devices | cut -f2 -d' ' | while read uuid; do bluetoothctl info $uuid; done | grep -e "Name\|Connected: yes" | grep -B1 "yes" | head -n 1 | cut -d\  -f2-
+
