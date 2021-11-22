@@ -1,0 +1,19 @@
+#!/bin/bash
+
+files=$(find /sys/class/hwmon/hwmon*/ -name temp*_input)
+max=0
+min=100
+
+for f in $files
+do
+  temp=$(cat $f)
+  result=$(expr "$temp" / "1000")
+  if (( $result > $max )); then
+    max=$result
+  elif
+   (( $result < $min )); then
+    min=$result
+  fi
+done
+
+echo $min

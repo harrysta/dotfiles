@@ -2,6 +2,6 @@
 
 while  :
 do
-  xsetroot -name " $(gputemp)°C   $(bluetoothdevls -p)   $(date +'%a %d/%m/%Y   %H:%M')  "
+  xsetroot -name "  CPU $(cputemp)°C   GPU $(gputemp)°C   $(bluetoothdevls -p)   $(date +'%a %d/%m/%Y   %H:%M')  "
   sleep 1
 done
