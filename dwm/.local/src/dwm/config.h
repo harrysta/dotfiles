@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <X11/XF86keysym.h>
+
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -19,7 +21,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "", "" };
+static const char *tags[] = { "1", "2", "3", "4", "5", "6", "", "", "" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -28,9 +30,10 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
-        { "discord",  NULL,       NULL,       1 << 8,       0,           -1 },
-        { "Steam",    NULL,       NULL,       1 << 6,       0,           -1 },
-        { "QjackCtl", NULL,       NULL,       1 << 7,       1,           -1 },
+  { "discord",  NULL,       NULL,       1 << 8,       0,           -1 },
+  { "Steam",    NULL,       NULL,       1 << 7,       0,           -1 },
+  { "QjackCtl", NULL,       NULL,       1 << 6,       1,           -1 },
+  { "Thunar",   NULL,       NULL,       0,            1,           -1 },
 };
 
 /* layout(s) */
@@ -42,7 +45,7 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "=",      tile },    /* first entry is default */
 	{ "=",      NULL },    /* no layout function means floating behavior */
-	{ "[M]",      monocle },
+	{ "[M]",     monocle },
 };
 
 /* key definitions */
@@ -61,43 +64,49 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_gray2, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "st", NULL };
 static const char *prtscrcmd[] = { "prtscr" };
+static const char *voldowncmd[]   = { "amixer", "set", "Master", "playback", "10%-",   NULL };
+static const char *volupcmd[]     = { "amixer", "set", "Master", "playback", "10%+",   NULL };
+static const char *voltogglecmd[] = { "amixer", "set", "Master", "playback", "toggle", NULL };
 
 static Key keys[] = {
-	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-  { MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
-	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
-	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
-	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-  { MODKEY,                       XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
-	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
-	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
-	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ 0,                            XK_Print,  spawn,          {.v = prtscrcmd } },
-	TAGKEYS(                        XK_1,                      0)
-	TAGKEYS(                        XK_2,                      1)
-	TAGKEYS(                        XK_3,                      2)
-	TAGKEYS(                        XK_4,                      3)
-	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	/* modifier                     key                       function        argument */
+	{ MODKEY,                       XK_p,                     spawn,          {.v = dmenucmd } },
+	{ MODKEY|ShiftMask,             XK_Return,                spawn,          {.v = termcmd } },
+  { MODKEY,                       XK_b,                     togglebar,      {0} },
+	{ MODKEY,                       XK_j,                     focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,                     focusstack,     {.i = -1 } },
+	{ MODKEY,                       XK_i,                     incnmaster,     {.i = +1 } },
+	{ MODKEY,                       XK_d,                     incnmaster,     {.i = -1 } },
+	{ MODKEY,                       XK_h,                     setmfact,       {.f = -0.05} },
+	{ MODKEY,                       XK_l,                     setmfact,       {.f = +0.05} },
+  { MODKEY,                       XK_Return,                zoom,           {0} },
+	{ MODKEY,                       XK_Tab,                   view,           {0} },
+	{ MODKEY|ShiftMask,             XK_c,                     killclient,     {0} },
+	{ MODKEY,                       XK_t,                     setlayout,      {.v = &layouts[0]} },
+	{ MODKEY,                       XK_f,                     setlayout,      {.v = &layouts[1]} },
+	{ MODKEY,                       XK_m,                     setlayout,      {.v = &layouts[2]} },
+	{ MODKEY,                       XK_space,                 setlayout,      {0} },
+	{ MODKEY|ShiftMask,             XK_space,                 togglefloating, {0} },
+	{ MODKEY,                       XK_0,                     view,           {.ui = ~0 } },
+	{ MODKEY|ShiftMask,             XK_0,                     tag,            {.ui = ~0 } },
+	{ MODKEY,                       XK_comma,                 focusmon,       {.i = -1 } },
+	{ MODKEY,                       XK_period,                focusmon,       {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_comma,                 tagmon,         {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_period,                tagmon,         {.i = +1 } },
+	{ 0,                            XK_Print,                 spawn,          {.v = prtscrcmd    } },
+  { 0,                            XF86XK_AudioRaiseVolume,  spawn,          {.v = volupcmd     } },
+  { 0,                            XF86XK_AudioLowerVolume,  spawn,          {.v = voldowncmd   } },
+  { 0,                            XF86XK_AudioMute,         spawn,          {.v = voltogglecmd } },
+	TAGKEYS(                        XK_1,                                      0)
+	TAGKEYS(                        XK_2,                                      1)
+	TAGKEYS(                        XK_3,                                      2)
+	TAGKEYS(                        XK_4,                                      3)
+	TAGKEYS(                        XK_5,                                      4)
+	TAGKEYS(                        XK_6,                                      5)
+	TAGKEYS(                        XK_7,                                      6)
+	TAGKEYS(                        XK_8,                                      7)
+	TAGKEYS(                        XK_9,                                      8)
+	{ MODKEY|ShiftMask,             XK_q,                     quit,           {0} },
 };
 
 /* button definitions */
