@@ -1,12 +1,12 @@
-#!/bin/bash
+#!/bin/sh
 
-xrandr --output DP-4 --mode 2560x1440 --rate 170 &
+xrandr --output DP-4 --mode 2560x1440 --rate 170
 xinput --set-prop "SINOWEALTH Game Mouse" 300 -0.7
 feh --bg-fill --no-fehbg --randomize $WALLPAPERS
 picom -b
 dwmstatus &
 discord &
-# spotify &
-# qjackctl start &
+steam &
+qjackctl start &
 
 exec dwm
