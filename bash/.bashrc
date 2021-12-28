@@ -65,7 +65,6 @@ fi
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
-alias mame='mame --rompath $HOME/games/mame_roms'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 
 # >>> conda initialize >>>
