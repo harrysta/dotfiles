@@ -1,0 +1,5 @@
+Plug 'preservim/nerdcommenter'
+Plug 'tpope/vim-surround'
+Plug 'qpkorr/vim-bufkill'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
