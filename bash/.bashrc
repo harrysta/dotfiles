@@ -44,7 +44,6 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 PS1="\033[01;32m\]\u@\h:\[\e[33m\]\w\[\e[0m\]\$ "
-FZF_DEFAULT_COMMAND="find -L"
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -66,19 +65,3 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/harry/.local/bin/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/harry/.local/bin/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/harry/.local/bin/miniconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/harry/.local/bin/miniconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
