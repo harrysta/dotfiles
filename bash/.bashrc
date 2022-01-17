@@ -64,4 +64,5 @@ fi
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+alias grep='grep --color=always'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
