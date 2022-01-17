@@ -20,7 +20,6 @@ set updatetime=750 " time until update
 set undofile " persists undo tree
 set matchpairs+=<:> " navigate around tag edges with %
 set noswapfile
-set termguicolors
 autocmd FileType * setlocal formatoptions-=cro " disable auto-commenting new lines under commented ones
 filetype plugin indent on " enable detection, plugins and indents
 let g:netrw_banner=0 " disable banner in netrw
