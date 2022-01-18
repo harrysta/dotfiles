@@ -30,8 +30,6 @@ nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
 vnoremap <Space> zf
 " disable accidentally typing :q command
 cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'echo' : 'q')<CR>
-" replace :w with :w! to bypass read-only prompt
-cabbrev w <c-r>='w!'<CR>
 " don't select line after paragraph in visual mode
 vnoremap } }k
 " jump between matching tags
