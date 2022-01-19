@@ -63,13 +63,13 @@ vim.opt.list = true
 require("indent_blankline").setup { char_highlight_list = { "IndentBlanklineIndent1", }, }
 EOF
 
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gH    <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> <f2>  <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> <f12>     <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <c-f12>   <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <s-f12>   <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> K         <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <leader>a <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <silent> <c-k>     <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> <f2>      <cmd>lua vim.lsp.buf.rename()<CR>
 
 let g:syntastic_sass_checkers=["sasslint"]
 let g:syntastic_scss_checkers=["sasslint"]
