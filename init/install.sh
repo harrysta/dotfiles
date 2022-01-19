@@ -1,20 +1,21 @@
 #!/bin/sh
 
-set -e
-
 srcdir="$HOME/.local/src"
 fontdir="$XDG_DATA_HOME/fonts"
-suckless_programs={"dwm", "st"}
+suckless_programs=("dwm" "st")
 
 # suckless
 for n in $suckless_programs
 do
-  git clone https://git.suckless.org/$n $srcdir/$n
+  cdir=$srcdir/$n
+  git -C $cdir init
+  git -C $cdir remote add origin https://git.suckless.org/$n
+  git -C $cdir pull origin master
   sudo make clean install -C $srcdir/$n
 done
 
 # fonts
-wget https://github.com/supermarin/YosemiteSamFranciscoFont/archive/master.zip -P $fontdir
+wget https://github.com/supermarin/YosemiteSanFranciscoFont/archive/master.zip -P $fontdir
 unzip -o $fontdir/master.zip -d $fontdir
-find $fontdir/YosemiteSamFranciscoFont-master ! -name "*.ttf" -type f -delete
+find $fontdir/YosemiteSanFranciscoFont-master ! -name "*.ttf" -type f -delete
 rm $fontdir/master.zip
