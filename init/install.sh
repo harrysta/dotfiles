@@ -2,10 +2,10 @@
 
 srcdir="$HOME/.local/src"
 fontdir="$XDG_DATA_HOME/fonts"
-suckless_programs=("dwm" "st")
+suckless_programs=("dwm" "st" "dmenu")
 
 # suckless
-for n in $suckless_programs
+for n in "${suckless_programs[@]}"
 do
   cdir=$srcdir/$n
   git -C $cdir init
@@ -17,5 +17,5 @@ done
 # fonts
 wget https://github.com/supermarin/YosemiteSanFranciscoFont/archive/master.zip -P $fontdir
 unzip -o $fontdir/master.zip -d $fontdir
-find $fontdir/YosemiteSanFranciscoFont-master ! -name "*.ttf" -type f -delete
+find $fontdir/YosemiteSamFranciscoFont-master ! -name "*.ttf" -type f -delete
 rm $fontdir/master.zip
