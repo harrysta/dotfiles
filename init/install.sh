@@ -8,6 +8,7 @@ suckless_programs=("dwm" "st" "dmenu")
 for n in "${suckless_programs[@]}"
 do
   cdir=$srcdir/$n
+  mkdir -p $srcdir
   git -C $cdir init
   git -C $cdir remote add origin https://git.suckless.org/$n
   git -C $cdir pull origin master
