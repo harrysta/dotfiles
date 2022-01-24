@@ -10,4 +10,3 @@ nmap <leader>cc <plug>NERDCommenterAltDelims
 nnoremap <C-f>     <cmd>Telescope find_files<CR>
 nnoremap <C-b>     <cmd>Telescope buffers<CR>
 nnoremap <leader>f <cmd>lua require("telescope").extensions.live_grep_raw.live_grep_raw()<CR>
-colorscheme tokyonight
