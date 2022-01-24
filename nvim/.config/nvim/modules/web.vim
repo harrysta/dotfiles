@@ -1,17 +1,13 @@
+" add // and {/* */} comment options for jsx and tsx files
+let g:NERDCustomDelimiters={
+\ 'javascript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+\ 'typescript': { 'left': '//', 'right': '', 'leftAlt': '{/*', 'rightAlt': '*/}' },
+\}
+
 set signcolumn=yes " add a column for signs (e.g. LSP, ...)
 set laststatus=2 " always show last window status
 nnoremap <leader>h :e /Windows/System32/drivers/etc/hosts<CR>
 let g:prettier#quickfix_enabled = 0
-
-let g:lightline = {
-\ 'active': {
-\   'left': [ [ 'mode', 'paste' ],
-\             [ 'gitbranch', 'readonly', 'modified', 'filename' ] ]
-\ },
-\ 'component_function': {
-\   'gitbranch': 'gitbranch#name'
-\ },
-\ }
 
 let g:closetag_filenames =       '*.html,*.xhtml,*.jsx,*.js,*.tsx'
 let g:closetag_xhtml_filenames = '*.html,*.xhtml,*.jsx,*.js,*.tsx'

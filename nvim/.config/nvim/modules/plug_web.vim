@@ -1,7 +1,4 @@
 Plug 'pangloss/vim-javascript'
-Plug 'itchyny/lightline.vim'
-Plug 'itchyny/vim-gitbranch'
-Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 Plug 'alvan/vim-closetag'
