@@ -6,7 +6,11 @@ let g:NERDCustomDelimiters={
 
 set signcolumn=yes " add a column for signs (e.g. LSP, ...)
 set laststatus=2 " always show last window status
-nnoremap <leader>h :e /Windows/System32/drivers/etc/hosts<CR>
+if has('win32')
+  nnoremap <leader>h :e $systemroot/System32/drivers/etc/hosts<CR>
+else
+  nnoremap <leader>h :e /etc/hosts<CR>
+endif
 let g:prettier#quickfix_enabled = 0
 
 let g:closetag_filenames =       '*.html,*.xhtml,*.jsx,*.js,*.tsx'

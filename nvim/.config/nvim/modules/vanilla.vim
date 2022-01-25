@@ -19,7 +19,7 @@ set shortmess+=c " don't need to press enter so often for completion
 set updatetime=750 " time until update
 set undofile " persists undo tree
 set matchpairs+=<:> " navigate around tag edges with %
-set noswapfile
+set noswapfile " undofiles make these pointless
 autocmd FileType * setlocal formatoptions-=cro " disable auto-commenting new lines under commented ones
 filetype plugin indent on " enable detection, plugins and indents
 let g:netrw_banner=0 " disable banner in netrw
@@ -28,10 +28,18 @@ let g:netrw_winsize=35 " cover only a percentage of the screen
 " folds
 nnoremap <silent> <Space> @=(foldlevel('.')?'za':"\<Space>")<CR>
 vnoremap <Space> zf
-" disable accidentally typing :q command
+" disable accidentally typing :q or :wq command
 cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'echo' : 'q')<CR>
+cabbrev wq <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'echo' : 'wq')<CR>
 " don't select line after paragraph in visual mode
 vnoremap } }k
 " jump between matching tags
 runtime macros/matchit.vim
+" open vimrc file
 nnoremap <leader>v :e $MYVIMRC<CR>
+" open notes dir
+if has('win32')
+  nnoremap <leader>n :e $HOMEDRIVE$HOMEPATH/Documents/notes<CR>
+else
+  nnoremap <leader>n :e $HOME/doc/local/notes<CR>
+endif
