@@ -1,0 +1,3 @@
+#!/bin/sh
+
+PIPEWIRE_LATENCY="128/44100" pw-jack /opt/REAPER/reaper

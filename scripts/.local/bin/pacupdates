@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+pkg_updates() {
+	updates=$(checkupdates | wc -l)
+	if [ "$updates" -eq 0 ]; then
+		echo "Fully Updated"
+	elif [ "$updates" -eq 1]; then
+		echo "1 new update"
+	else
+		echo "$updates"" new updates"
+	fi
+}
+pkg_updates

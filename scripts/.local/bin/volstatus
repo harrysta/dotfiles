@@ -1,8 +1,0 @@
-#!/bin/bash
-
-amixerMasterInfo=$(amixer get Master playback)
-vol=$(echo $amixerMasterInfo | sed -n 's/.*\[\([0-9]\+\)%.*/\1/p' | head -n 1)
-muted=$(echo $amixerMasterInfo | grep -c "off")
-
-{ [ "$muted" != "0" ] && echo -n " "; } || { [[ "$vol" -gt 50 ]] && echo -n ; } || { [[ "$vol" -gt 0 ]] && echo -n " "; } || echo -n " ";
-echo " $vol%"
