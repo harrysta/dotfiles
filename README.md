@@ -9,6 +9,7 @@ These should be available in the distro's package manager.
 - alsa (Kernel API for audio)
 - nvidia (Proprietary graphics driver)
 - [vim](https://github.com/vim/vim)/[neovim](https://github.com/neovim/neovim) (Text editor)
+- [tmux](https://github.com/tmux/tmux) (Terminal multiplexer)
 - [feh](https://github.com/derf/feh) (Image viewer + wallpaper changer)
 - [maim](https://github.com/naelstrof/maim) (Screenshot utility)
 - [xclip](https://github.com/astrand/xclip) (Clipboard interface)
@@ -42,6 +43,19 @@ Then execute:
 cd dotfiles
 stow [LIST OF AVAILABLE DOTFILES SEPARATED BY SPACE]
 ```
+
+### Exclusive Variables
+
+Some variables vary between OSes and machines. To reconcile this, .profile and .xinitrc attempt to call the binaries or bash scripts `exclusiverc` and `xexclusiverc` respectively. These files must be manually created and be given executable privileges.
+`exclusiverc` is usually used to declare environment variables exclusive to the OS or machine being used. `xexclusiverc` is used to set up devices and/or apps after starting the X server with `startx`, which is already called at the end of `.profile`.  
+Required variables for `exclusiverc`:
+- WALLPAPERS (directory of wallpapers for feh)
+- XRES (resolution for xrandr)
+- XOUTPUT (output for xrandr)
+- XRATE (refresh rate for xrandr)
+- WM (window manager to start)  
+
+
 
 ### Vim/Neovim
 
