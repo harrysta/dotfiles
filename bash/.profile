@@ -12,8 +12,6 @@ export XDG_CONFIG_DIRS=/etc/xdg
 export XDG_RUNTIME_DIR=/run/user/$UID
 command -v wine && export WINEPREFIX=$HOME/.local/wine
 
-export WALLPAPERS="$HOME/pic/wallpapers/"
-
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
-
+source exclusiverc
 [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]] && startx

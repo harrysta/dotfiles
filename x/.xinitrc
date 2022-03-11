@@ -1,9 +1,7 @@
 #!/bin/sh
 
-xrandr --output DP-4 --mode 2560x1440 --rate 170
+xrandr --output $XOUTPUT --mode $XRES --rate $XRATE
 feh --bg-fill --no-fehbg --randomize $WALLPAPERS
-dwmstatus &
-discord &
-steam &
+. xexclusiverc # declarations and commands exclusive to this machine
 
-exec dwm
+exec $WM
