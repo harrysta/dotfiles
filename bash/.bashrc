@@ -27,13 +27,10 @@ shopt -s checkwinsize
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
-
 force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
 	# We have color support; assume it's compliant with Ecma-48
 	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
 	# a case would tend to support setf rather than setaf.)
@@ -43,11 +40,9 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-PS1="\033[01;32m\]\u@\h:\[\e[33m\]\w\[\e[0m\]\$ "
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
 fi
 
 # enable programmable completion features (you don't need to enable
@@ -64,5 +59,7 @@ fi
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
+alias ls='ls --color=auto --group-directories-first'
 alias grep='grep --color=always'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
+export PS1="\033[01;32m\]\u@\h:\[\e[33m\]\w\$\[\e[0m\] "
