@@ -1,5 +1,5 @@
 set signcolumn=yes " add a column for signs (e.g. LSP, ...)
-set laststatus=2 " always show last window status
+set wildignore+=node_modules/**
 let g:prettier#quickfix_enabled = 0
 
 let g:closetag_filenames =       '*.html,*.xhtml,*.jsx,*.js,*.tsx'
@@ -19,8 +19,6 @@ let g:closetag_shortcut = '>'
 let g:closetag_close_shortcut = '<leader>>'
 
 lua << EOF
--- Telescope ignore node modules
-require('telescope').setup{ defaults = { file_ignore_patterns = {"node_modules"} } }
 -- Setup nvim-cmp.
 local cmp = require'cmp'
 cmp.setup({
@@ -47,9 +45,6 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protoco
 require('lspconfig').tsserver.setup {
   capabilities = capabilities
 }
-vim.cmd [[highlight IndentBlanklineIndent1 guifg=#262626 gui=nocombine]]
-vim.opt.list = true
-require("indent_blankline").setup { char_highlight_list = { "IndentBlanklineIndent1", }, }
 EOF
 
 nnoremap <silent> <f12>     <cmd>lua vim.lsp.buf.definition()<CR>

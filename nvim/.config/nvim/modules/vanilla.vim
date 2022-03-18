@@ -16,19 +16,17 @@ set nowritebackup " don't write backup files
 set cmdheight=1 " only one line for commands
 set shortmess+=c " don't show prompts often for completion
 set updatetime=750 " time until update
-set undofile " persists undo tree
+set undofile " persist undo tree
 set matchpairs+=<:> " navigate around tag edges with %
 set noswapfile " undofiles make these pointless
-set path+=**/* " enables navigating through files in all subdirs
+set path+=src/**,include/** " enable navigating through files in c projects
 set completeopt=menu,menuone,noselect " better autocomplete options
-autocmd FileType * setlocal formatoptions-=cro " disable auto-commenting new lines under commented ones
+autocmd Filetype * set formatoptions-=cro " disable auto-commenting new lines under commented ones
+set foldopen-=block " disable opening folds using block navigation
 autocmd BufWinLeave *.* mkview " save folding in view file
 autocmd BufWinEnter *.* silent! loadview " loading folding from view file (ignore non-existing)
 autocmd Filetype c nnoremap <c-p> oprintf("\n", );<ESC>6hi
 filetype plugin indent on " enable detection, plugins and indents
-let g:netrw_banner=0 " disable banner in netrw
-let g:netrw_liststyle=3 " tree view in netrw
-let g:netrw_winsize=35 " cover only a percentage of the screen
 runtime macros/matchit.vim " jump between matching tags
 " disable accidentally typing :q or :wq command
 cabbrev q <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'echo' : 'q')<CR>
@@ -44,3 +42,4 @@ else
 endif
 execute 'nnoremap <leader>n :e ' . notes_dir . '/notes<CR>'
 execute 'nnoremap <leader>h :e ' . hosts_dir . '/etc/hosts<CR>'
+command -nargs=1 F vimgrep <args> | cope " grep and show results window
