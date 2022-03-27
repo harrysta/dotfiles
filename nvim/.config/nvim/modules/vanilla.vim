@@ -7,6 +7,7 @@ set shiftwidth=2 " indentation
 set number " show absolute line numbers
 set ruler " show line and column number
 set ignorecase " search case insensitive
+set wildignorecase " :edit and :find case insensitive
 set smartcase " search via smartcase
 set incsearch " search incremental
 set hlsearch " highlight matches
@@ -23,8 +24,6 @@ set path+=src/**,include/** " enable navigating through files in c projects
 set completeopt=menu,menuone,noselect " better autocomplete options
 autocmd Filetype * set formatoptions-=cro " disable auto-commenting new lines under commented ones
 set foldopen-=block " disable opening folds using block navigation
-autocmd BufWinLeave *.* mkview " save folding in view file
-autocmd BufWinEnter *.* silent! loadview " loading folding from view file (ignore non-existing)
 autocmd Filetype c nnoremap <c-p> oprintf("\n", );<ESC>6hi
 filetype plugin indent on " enable detection, plugins and indents
 runtime macros/matchit.vim " jump between matching tags
