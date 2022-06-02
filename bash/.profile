@@ -10,7 +10,7 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_DATA_DIRS=/usr/local/share:/usr/share
 export XDG_CONFIG_DIRS=/etc/xdg
 export XDG_RUNTIME_DIR=/run/user/$UID
-command -v wine && export WINEPREFIX=$HOME/.local/wine
+command -v wine &> /dev/null && export WINEPREFIX=$HOME/.local/wine
 
 [ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
 source exclusiverc
