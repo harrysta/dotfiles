@@ -62,4 +62,4 @@ alias mv='mv -i'
 alias ls='ls --color=auto --group-directories-first'
 alias grep='grep --color=always'
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
-export PS1="\033[01;32m\]\u@\h:\[\e[33m\]\w\$\[\e[0m\] "
+export PS1="\[\e[1;32m\]\u@\h:\[\e[33m\]\w\$\[\e[0m\] "
