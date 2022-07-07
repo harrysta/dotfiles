@@ -1,5 +1,0 @@
-Plug 'preservim/nerdcommenter'
-Plug 'machakann/vim-sandwich'
-Plug 'qpkorr/vim-bufkill'
-Plug 'lukas-reineke/indent-blankline.nvim'
-Plug 'chrisbra/Colorizer'

@@ -1,6 +1,7 @@
 syntax on " enable syntax highlighting
 filetype plugin indent on " enable detection, plugins and indents
 set nocompatible " this config is not for vi
+set termguicolors " colours are cool
 set splitright " split to the right
 set splitbelow " split below
 set tabstop=2 " tab equals to 2 spaces
@@ -9,6 +10,7 @@ set autoindent " enable indenting
 set cindent "enable C-style indenting rules
 set number " show absolute line numbers
 set ruler " show line and column number
+set nowrap " don't wrap lines overflowing screen
 set ignorecase " search case insensitive
 set smartcase " search via smartcase
 set wildignorecase " :edit and :find case insensitive
