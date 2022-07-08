@@ -18,9 +18,9 @@ vim.cmd([[
 	augroup END
 ]])
 -- replace substitute with surround
-keymap('n', 's', 'ys', opts)
-keymap('n', 'S', 'yS', opts)
-keymap('v', 's', 'S' , opts)
+keymap('n', 's', 'ys', {})
+keymap('n', 'S', 'yS', {})
+keymap('v', 's', 'S' , {})
 -- recapture visual when indenting
 keymap('v', '<', '<gv', opts)
 keymap('v', '>', '>gv', opts)
