@@ -4,5 +4,5 @@ if not vim.g.colorscheme then
 	return
 end
 if vim.fn.exists('*ColorschemeFunc') ~= 0 then
-	vim.fn['ColorschemeFunc']()
+	vim.cmd('silent! exec ColorschemeFunc()')
 end
