@@ -1,3 +1,21 @@
 #!/bin/sh
 
-printf "%s" "$(date +"%a %b %d, %R"| sed 's/  / /g')"
+while getopts "td" option
+do
+	case $option in
+		t)
+			date +"%R"
+			exit $?
+			;;
+		d)
+			date +"%a %b %d"
+			exit $?
+			;;
+		*)
+			exit 1
+			;;
+	esac
+done
+date +"%a %b %d, %R"
+
+exit $?

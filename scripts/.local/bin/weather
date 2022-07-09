@@ -1,3 +1,0 @@
-#!/bin/sh
-
-curl -sf "wttr.in?format=1" | sed -r 's/^.{4}//' | tee "$HOME/.local/share/weatherreport" || exit 1
