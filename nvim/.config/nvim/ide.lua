@@ -1,8 +1,10 @@
 require 'plugins'
+require 'treesitter'
+require 'indenting'
 require 'colorscheme'
 require 'terminal'
 require 'completion'
-require 'tree'
+require 'commenting'
 
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
@@ -24,5 +26,3 @@ keymap('v', 's', 'S' , {})
 -- recapture visual when indenting
 keymap('v', '<', '<gv', opts)
 keymap('v', '>', '>gv', opts)
-
-keymap('n', '<c-b>', ':NvimTreeToggle<cr>', opts)

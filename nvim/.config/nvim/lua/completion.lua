@@ -1,13 +1,11 @@
-local cmp_status_ok, cmp = pcall(require, 'cmp')
-if not cmp_status_ok then return end
-local luasnip_status_ok, luasnip = pcall(require, 'luasnip')
-if not luasnip_status_ok then return end
+local status, cmp = pcall(require, 'cmp')
+if not status then return end
+local status, luasnip = pcall(require, 'luasnip')
+if not status then return end
 require('luasnip/loaders/from_vscode').lazy_load()
 
 local supertab = function(fallback)
-	if luasnip.expandable() then
-		luasnip.expand()
-	elseif luasnip.expand_or_jumpable() then
+	if luasnip.expand_or_jumpable() then
 		luasnip.expand_or_jump()
 	else
 		fallback()
@@ -30,7 +28,7 @@ cmp.setup({
 	},
 	mapping = cmp.mapping.preset.insert({
 		['<c-e>'] = cmp.mapping.abort(),
-		['<cr>'] = cmp.mapping.confirm({ select = true }),
+		['<c-y>'] = cmp.mapping.confirm({ select = true }),
 		['<tab>'] = cmp.mapping(supertab, { 'i', 's', }),
 		['<s-tab>'] = cmp.mapping(rsupertab, { 'i', 's', }),
 	}),
