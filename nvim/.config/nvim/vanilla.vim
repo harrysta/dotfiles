@@ -27,17 +27,20 @@ set matchpairs+=<:> " navigate around tag edges with %
 set noswapfile " undofiles make these pointless
 set completeopt=menuone,noselect " always show menu for completion
 set foldopen-=block " disable opening folds using block navigation
+set list " show tabs and trailing spaces
 autocmd Filetype * set formatoptions-=cro " disable auto-commenting new lines under commented ones
 runtime macros/matchit.vim " jump between matching tags
-cabbrev wq w
-cabbrev w' w
-cabbrev q <Nop>
-nnoremap <silent> <c-up>   :resize +2<cr>
-nnoremap <silent> <c-down> :resize -2<cr>
-nnoremap <silent> <c-left>  :vertical resize +2<cr>
-nnoremap <silent> <c-right> :vertical resize -2<cr>
+cabbrev wq w " the q is always pressed by accident
+cabbrev w' w " prevent accidentally writing to a file called '
+cabbrev q <Nop> " simply disable :q completely, :quit still works
+nnoremap <silent> <up>   :resize +2<cr>
+nnoremap <silent> <down> :resize -2<cr>
+nnoremap <silent> <left>  :vertical resize +2<cr>
+nnoremap <silent> <right> :vertical resize -2<cr>
 nnoremap <silent> <c-k> :bprevious<cr>
 nnoremap <silent> <c-j> :bnext<cr>
 nmap <silent> cp :let @+ = expand("%:p")<cr>
 nmap <leader>v :e $MYVIMRC<CR>
 nmap Y y$
+imap <c-r><space> <c-r>+
+map <space> "+
