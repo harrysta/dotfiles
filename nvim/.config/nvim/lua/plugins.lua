@@ -16,24 +16,32 @@ return packer.startup(function()
 	use 'nvim-lua/popup.nvim'
 	use 'kyazdani42/nvim-web-devicons'
 	use 'nvim-treesitter/nvim-treesitter'
-	use 'JoosepAlviste/nvim-ts-context-commentstring'
 	use 'lukas-reineke/indent-blankline.nvim'
+	use 'lewis6991/impatient.nvim'
+	use 'dstein64/vim-startuptime'
 	-- utilities
 	use 'inkarkat/vim-ReplaceWithRegister'
 	use 'tpope/vim-surround'
+	use 'tpope/vim-repeat'
+	use 'tpope/vim-eunuch'
 	use 'qpkorr/vim-bufkill'
 	use 'akinsho/toggleterm.nvim'
 	use 'numToStr/Comment.nvim'
+	use 'JoosepAlviste/nvim-ts-context-commentstring'
+	use 'windwp/nvim-ts-autotag'
 	-- completion engine
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-buffer'
 	use 'hrsh7th/cmp-path'
 	use 'hrsh7th/cmp-cmdline'
 	use 'hrsh7th/cmp-nvim-lsp'
+	use 'saadparwaiz1/cmp_luasnip'
 	-- snippet engine
 	use 'L3MON4D3/LuaSnip'
-	use 'saadparwaiz1/cmp_luasnip'
 	use 'rafamadriz/friendly-snippets'
+	-- lsp
+	use 'neovim/nvim-lspconfig'
+	use 'williamboman/nvim-lsp-installer'
 	if str then
 		require('packer').sync()
 	end

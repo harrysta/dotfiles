@@ -1,3 +1,4 @@
+pcall(require,  'impatient')
 require 'plugins'
 require 'treesitter'
 require 'indenting'
@@ -5,6 +6,7 @@ require 'colorscheme'
 require 'terminal'
 require 'completion'
 require 'commenting'
+require 'lsp'
 
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }

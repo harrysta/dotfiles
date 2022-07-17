@@ -27,12 +27,13 @@ cmp.setup({
 		end,
 	},
 	mapping = cmp.mapping.preset.insert({
-		['<c-e>'] = cmp.mapping.abort(),
-		['<c-y>'] = cmp.mapping.confirm({ select = true }),
-		['<tab>'] = cmp.mapping(supertab, { 'i', 's', }),
+		['<c-e>']   = cmp.mapping.abort(),
+		['<c-y>']   = cmp.mapping.confirm({ select = true }),
+		['<tab>']   = cmp.mapping(supertab, { 'i', 's', }),
 		['<s-tab>'] = cmp.mapping(rsupertab, { 'i', 's', }),
 	}),
 	sources = {
+		{ name = 'nvim_lsp' },
 		{ name = 'luasnip' },
 		{ name = 'buffer' },
 		{ name = 'path' },

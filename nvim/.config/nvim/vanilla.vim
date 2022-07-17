@@ -1,7 +1,6 @@
 syntax on " enable syntax highlighting
 filetype plugin indent on " enable detection, plugins and indents
 set nocompatible " this config is not for vi
-set termguicolors " colours are cool
 set splitright " split to the right
 set splitbelow " split below
 set tabstop=2 " tab equals to 2 spaces
@@ -28,6 +27,7 @@ set noswapfile " undofiles make these pointless
 set completeopt=menuone,noselect " always show menu for completion
 set foldopen-=block " disable opening folds using block navigation
 set list " show tabs and trailing spaces
+set listchars=nbsp:+,tab:>\ ,trail:- " non-breaking spaces, tabs, and spaces
 autocmd Filetype * set formatoptions-=cro " disable auto-commenting new lines under commented ones
 runtime macros/matchit.vim " jump between matching tags
 cabbrev wq w " the q is always pressed by accident
@@ -39,7 +39,7 @@ nnoremap <silent> <left>  :vertical resize +2<cr>
 nnoremap <silent> <right> :vertical resize -2<cr>
 nnoremap <silent> <c-k> :bprevious<cr>
 nnoremap <silent> <c-j> :bnext<cr>
-nmap <silent> cp :let @+ = expand("%:p")<cr>
+nmap <silent> cp :let @+=expand("%:p")<cr>
 nmap <leader>v :e $MYVIMRC<CR>
 nmap Y y$
 imap <c-r><space> <c-r>+
