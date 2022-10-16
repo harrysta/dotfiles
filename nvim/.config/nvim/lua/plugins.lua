@@ -29,6 +29,7 @@ return packer.startup(function()
 	use 'numToStr/Comment.nvim'
 	use 'JoosepAlviste/nvim-ts-context-commentstring'
 	use 'windwp/nvim-ts-autotag'
+	use 'nvim-telescope/telescope.nvim'
 	-- completion engine
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-buffer'

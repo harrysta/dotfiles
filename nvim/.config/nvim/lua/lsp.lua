@@ -54,6 +54,6 @@ for _, s in ipairs(lsp_installer.get_installed_servers()) do
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
 	lspconfig[s.name].setup({
 		on_attach = on_attach,
-		capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+		capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
 	})
 end

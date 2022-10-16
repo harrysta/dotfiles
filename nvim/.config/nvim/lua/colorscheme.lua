@@ -1,4 +1,4 @@
-if not vim.g.colorscheme then
+if not vim.g.colorscheme or os.getenv('TERM') == 'linux' then
 	vim.cmd('colorscheme default')
 	vim.opt.background='dark'
 	return

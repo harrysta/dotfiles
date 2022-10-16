@@ -37,10 +37,10 @@ nnoremap <silent> <up>   :resize +2<cr>
 nnoremap <silent> <down> :resize -2<cr>
 nnoremap <silent> <left>  :vertical resize +2<cr>
 nnoremap <silent> <right> :vertical resize -2<cr>
-nnoremap <silent> <c-k> :bprevious<cr>
-nnoremap <silent> <c-j> :bnext<cr>
+nnoremap <silent> <expr> <c-j> &buftype ==# 'quickfix' ? ':cnext<cr><c-w><c-p>' : ':bnext<cr>'
+nnoremap <silent> <expr> <c-k> &buftype ==# 'quickfix' ? ':cprevious<cr><c-w><c-p>' : ':bprevious<cr>'
 nmap <silent> cp :let @+=expand("%:p")<cr>
-nmap <leader>v :e $MYVIMRC<CR>
+nmap <leader>v :e $MYVIMRC<cr>
 nmap Y y$
 imap <c-r><space> <c-r>+
 map <space> "+
