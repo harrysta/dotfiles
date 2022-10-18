@@ -14,5 +14,7 @@ telescope.setup {
 }
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
-keymap('n', '<c-f>', '<cmd>Telescope find_files<cr>', opts)
+keymap('n', '<c-p>', '<cmd>Telescope find_files<cr>', opts)
+keymap('n', '<c-f>', '<cmd>Telescope live_grep<cr>', opts)
+keymap('n', '<c-b>', '<cmd>Telescope buffers<cr>', opts)
 keymap('n', '<c-t>', '<cmd>Telescope<cr>', opts)
