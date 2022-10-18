@@ -25,11 +25,11 @@ return packer.startup(function()
 	use 'tpope/vim-repeat'
 	use 'tpope/vim-eunuch'
 	use 'qpkorr/vim-bufkill'
-	use 'akinsho/toggleterm.nvim'
 	use 'numToStr/Comment.nvim'
 	use 'JoosepAlviste/nvim-ts-context-commentstring'
 	use 'windwp/nvim-ts-autotag'
 	use 'nvim-telescope/telescope.nvim'
+	use 'lewis6991/gitsigns.nvim'
 	-- completion engine
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-buffer'

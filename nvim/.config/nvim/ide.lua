@@ -3,11 +3,11 @@ require 'plugins'
 require 'treesitter'
 require 'indenting'
 require 'colorscheme'
-require 'terminal'
 require 'completion'
 require 'commenting'
 require 'search'
 require 'lsp'
+require 'gitlens'
 
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
