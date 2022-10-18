@@ -30,6 +30,7 @@ return packer.startup(function()
 	use 'windwp/nvim-ts-autotag'
 	use 'nvim-telescope/telescope.nvim'
 	use 'lewis6991/gitsigns.nvim'
+	use 'harrysta/vim-sysout'
 	-- completion engine
 	use 'hrsh7th/nvim-cmp'
 	use 'hrsh7th/cmp-buffer'

@@ -42,5 +42,6 @@ nnoremap <silent> <expr> <c-k> &buftype ==# 'quickfix' ? ':cprevious<cr><c-w><c-
 nmap <silent> cp :let @+=expand("%:p")<cr>
 nmap <leader>v :e $MYVIMRC<cr>
 nmap Y y$
+imap <c-r><c-r> <c-r>"
 imap <c-r><space> <c-r>+
 map <space> "+
