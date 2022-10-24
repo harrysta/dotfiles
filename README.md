@@ -37,52 +37,43 @@ chmod +x install.sh
 
 ### Custom install
 
-Remove local config and rc files of desired app (located at ~/, ~/.config and ~/.local/share)  
+Remove local config and rc files of desired app (located at ~/, ~/.config and ~/.local/share
 Then execute:
 ```sh
 cd dotfiles
 stow [LIST OF AVAILABLE DOTFILES SEPARATED BY SPACE]
 ```
 
-### Exclusive Variables
-
-Some variables vary between OSes and machines. To reconcile this, .profile and .xinitrc attempt to call the binaries or bash scripts `exclusiverc` and `xexclusiverc` respectively. These files must be manually created and be given executable privileges.
-`exclusiverc` is usually used to declare environment variables exclusive to the OS or machine being used. `xexclusiverc` is used to set up devices and/or apps after starting the X server with `startx`, which is already called at the end of `.profile`.  
-Required variables for `exclusiverc`:
-- WALLPAPERS (directory of wallpapers for feh)
-- XRES (resolution for xrandr)
-- XOUTPUT (output for xrandr)
-- XRATE (refresh rate for xrandr)
-- WM (window manager to start)  
-
-
 
 ### Vim/Neovim
 
-Configs are broken down into modules, which are manually added in the .vimrc/init.vim file. The modules are located
-in a directory called "modules" inside ~/.config/nvim (%localappdata%\nvim on Windows) and the module path (g:mpath) must be manually declared depending on OS.  
-  
-The [vanilla.vim](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/modules/vanilla.vim) module
-can be used out of the box, while the other modules are split into plugin installs and plugin configs.
-These files are called plug_[MODULE NAME] and [MODULE NAME] respectively. [Vim-plug](https://github.com/junegunn/vim-plug) **must be installed** on the system
-for the other modules to work.  
-  
+Vim config files are split into vanilla and ide, which are to be manually called from the .vimrc/init.vim file itself to be used.
+The purpose of this is to provide sourcing of configuration based on compatibility and usability required in any given moment.
+
+[vanilla.vim](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/vanilla.vim) contains vimscript configuration that is
+compatible with vim.
+
+[ide.lua](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/ide.lua) contains lua configuration that is only compatible with
+neovim, and provides IDE-like features using various plugins. This file also provides the ability to easily install and use a theme, by defining
+g:colorscheme, which contains the name in the form plugin managers understand (author/theme_name), and ColorschemeFunc(), which contains settings
+to apply after the theme has succesfully installed.
+
+
 Example .vimrc/init.vim:
 
 ```vim
-" Required
-let g:mpath = "[PATH TO MODULES DIR]/modules/"
+" This line is used for plugin installation
+let g:colorscheme = "tomasiser/vim-code-dark"
+" This won't throw an error if theme hasn't succesfully installed
+function! ColorschemeFunc()
+    " Theme-specific settings
+    set t_Co=256
+    set t_ut=
+    " Finish up by actually applying a theme
+    colorscheme codedark
+end function
 
-" Surround plug_ counterparts with vim-plug begin and end
-call plug#begin()
-" Simply provide name of file
-call module#src('plug_essential')
-call module#src('plug_web')
-call plug#end()
-
-" Contains no plugins or lua statements, hence no plug_ counterpart and can be used for .vimrc out of the box
-call module#src('vanilla')
-
-call module#src('essential')
-call module#src('web')
+" If init.vim is in the same directory, simply call by ./[filename]
+runtime ./vanilla.vim
+runtime ./ide.lua
 ```
