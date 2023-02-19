@@ -16,7 +16,7 @@ for _, sign in ipairs(signs) do
 end
 
 vim.diagnostic.config({
-	virtual_text = false,
+	virtual_text = true,
 	update_in_insert = false,
 	underline = true,
 	severity_sort = true,
@@ -31,7 +31,6 @@ vim.diagnostic.config({
 local opts = { noremap = true, silent = true }
 local keymap = vim.keymap.set
 vim.opt.signcolumn = 'yes'
-vim.api.nvim_create_autocmd('CursorHold', { callback = vim.diagnostic.open_float })
 keymap('n', ']d', vim.diagnostic.goto_next, opts)
 keymap('n', '[d', vim.diagnostic.goto_prev, opts)
 
