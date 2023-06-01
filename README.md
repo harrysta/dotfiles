@@ -6,38 +6,27 @@ These should be available in the distro's package manager.
 - wget (Web protocol utility)
 - gcc (C/C++ compiler)
 - make (Execution operator used mostly for C/C++ projects)
-- alsa (Kernel API for audio)
-- nvidia (Proprietary graphics driver)
+- ALSA (Kernel API for audio)
 - [vim](https://github.com/vim/vim)/[neovim](https://github.com/neovim/neovim) (Text editor)
 - [tmux](https://github.com/tmux/tmux) (Terminal multiplexer)
 - [feh](https://github.com/derf/feh) (Image viewer + wallpaper changer)
-- [maim](https://github.com/naelstrof/maim) (Screenshot utility)
-- [xclip](https://github.com/astrand/xclip) (Clipboard interface)
-- [Font Awesome](https://github.com/FortAwesome/Font-Awesome) (Icons for DWM status bar)
 - [Hack Font](https://github.com/source-foundry/Hack) (Terminal font)
-- [Capitaine Cursors](https://github.com/keeferrourke/capitaine-cursors) (Cursor theme)
 
 # Setup
 
 ### Clean install
 
-Remove .bashrc, .bash_profile, .profile from your $HOME directory.  
+Remove .bashrc, .bash_profile, .profile from your $HOME directory.\
 Execute the following:
 ```sh
 git clone https://github.com/harrysta/dotfiles
 cd dotfiles
 stow --no-folding
 ```
-Log out and log in again to finally call:
-```sh
-cd dotfiles/init
-chmod +x install.sh
-. install.sh
-```
 
 ### Custom install
 
-Remove local config and rc files of desired app (located at ~/, ~/.config and ~/.local/share
+Remove local config and rc files of desired app (located at ~/, ~/.config and ~/.local/share\
 Then execute:
 ```sh
 cd dotfiles
@@ -47,16 +36,19 @@ stow [LIST OF AVAILABLE DOTFILES SEPARATED BY SPACE]
 
 ### Vim/Neovim
 
-Vim config files are split into vanilla and ide, which are to be manually called from the .vimrc/init.vim file itself to be used.
-The purpose of this is to provide sourcing of configuration based on compatibility and usability required in any given moment.
+Vim config files are split into vanilla and ide modules, which are to be manually
+called in the .vimrc/init.vim file. The purpose of this is to provide sourcing of
+configuration based on compatibility and tooling required on the system used.
 
-[vanilla.vim](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/vanilla.vim) contains vimscript configuration that is
-compatible with vim.
+[vanilla.vim](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/vanilla.vim)
+is written purely in vimscript so that it is usable with both neovim and vim.
 
-[ide.lua](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/ide.lua) contains lua configuration that is only compatible with
-neovim, and provides IDE-like features using various plugins. This file also provides the ability to easily install and use a theme, by defining
-g:colorscheme, which contains the name in the form plugin managers understand (author/theme_name), and ColorschemeFunc(), which contains settings
-to apply after the theme has succesfully installed.
+[ide.lua](https://github.com/harrysta/dotfiles/blob/main/nvim/.config/nvim/ide.lua)
+contains lua configuration that is only compatible with neovim, and provides IDE-like
+features using various plugins. This file also provides the ability to easily install
+and use a theme, by defining g:colorscheme, which contains the name in the form
+plugin managers understand (author/theme_name), and ColorschemeFunc(), which contains
+settings to apply after the theme has succesfully installed.
 
 
 Example .vimrc/init.vim:
