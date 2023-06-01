@@ -1,5 +1,4 @@
 [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
-
 export LC_ALL="en_US.UTF-8"
 export EDITOR="nvim"
 export TERMINAL="st"
@@ -10,8 +9,8 @@ export XDG_DATA_HOME=$HOME/.local/share
 export XDG_DATA_DIRS=/usr/local/share:/usr/share
 export XDG_CONFIG_DIRS=/etc/xdg
 export XDG_RUNTIME_DIR=/run/user/$UID
-command -v wine &> /dev/null && export WINEPREFIX=$HOME/.local/wine
-
-[ -d "$HOME/.local/bin" ] && PATH="$HOME/.local/bin:$PATH"
-source exclusiverc
-[[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]] && startx
+export BIN=$HOME/.local/bin
+export SRC=$HOME/.local/src
+export WALLPAPERS="$HOME/pic/wallpapers/"
+[ -d "$BIN" ] && PATH="$BIN:$PATH"
+[ $(tty) = /dev/tty1 ] && [ -z $DISPLAY ] && exists startx && startx
