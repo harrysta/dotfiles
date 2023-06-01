@@ -1,7 +1,0 @@
-#!/bin/sh
-
-while  :
-do
-  xsetroot -name " $(bluetoothdevls -p)   CPU $(cputemp)°C   GPU $(gputemp)°C  $(volstatus)   $(date +'%a %d/%m/%Y   %H:%M')  "
-  sleep 1
-done
