@@ -3,9 +3,9 @@ if not status then return end
 local status, autotag = pcall(require, 'nvim-ts-autotag')
 if not status then return end
 treesitter.setup({
-	ensure_installed = { 'c', 'javascript', 'typescript', 'tsx', 'scss', 'json' },
+	ensure_installed = { 'javascript', 'typescript', 'tsx', 'scss', 'json' },
 	sync_install = false,
-	auto_install = true,
+	auto_install = false,
 	highlight = {
 		enable = true,
 		additional_vim_regex_highlighting = false,

@@ -3,9 +3,9 @@ if not status then return end
 vim.opt.listchars:append('trail:⋅')
 indent_blankline.setup({
 	show_current_context = true,
+	show_current_context_start = true,
 	show_first_indent_level = true,
 	show_trailing_blankline_indent = true,
-	char = '▏',
 	context_patterns = {
 		"abstract_class_declaration", "abstract_method_signature",
 		"accessibility_modifier", "ambient_declaration", "arguments", "array",

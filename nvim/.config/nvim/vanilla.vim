@@ -1,9 +1,11 @@
 syntax on " enable syntax highlighting
 filetype plugin indent on " enable detection, plugins and indents
 set nocompatible " this config is not for vi
+set showcmd " my terminal is not slow
 set splitright " split to the right
 set splitbelow " split below
 set tabstop=2 " tab equals to 2 spaces
+set softtabstop=2 " tabstop but for editing?
 set shiftwidth=2 " indent using 2 spaces
 set autoindent " enable indenting
 set cindent "enable C-style indenting rules
@@ -29,6 +31,8 @@ set foldopen-=block " disable opening folds using block navigation
 set list " show tabs and trailing spaces
 set listchars=nbsp:+,tab:>\ ,trail:- " non-breaking spaces, tabs, and spaces
 autocmd Filetype * set formatoptions-=cro " disable auto-commenting new lines under commented ones
+autocmd Filetype,BufNewFile,BufRead *.c,*.h,*.cpp :call SetCOpts()
+autocmd FileType,BufNewFile,BufRead markdown setlocal nocindent
 runtime macros/matchit.vim " jump between matching tags
 cabbrev wq w " the q is always pressed by accident
 cabbrev w' w " prevent accidentally writing to a file called '
@@ -37,11 +41,20 @@ nnoremap <silent> <up>   :resize +2<cr>
 nnoremap <silent> <down> :resize -2<cr>
 nnoremap <silent> <left>  :vertical resize +2<cr>
 nnoremap <silent> <right> :vertical resize -2<cr>
-nnoremap <silent> <expr> <c-j> &buftype ==# 'quickfix' ? ':cnext<cr><c-w><c-p>' : ':bnext<cr>'
-nnoremap <silent> <expr> <c-k> &buftype ==# 'quickfix' ? ':cprevious<cr><c-w><c-p>' : ':bprevious<cr>'
-nmap <silent> cp :let @+=expand("%:p")<cr>
+nnoremap <silent> <expr> <c-j> &buftype ==# 'quickfix' ? ':cnext<cr><c-w><c-p>' : '<Nop>'
+nnoremap <silent> <expr> <c-k> &buftype ==# 'quickfix' ? ':cprevious<cr><c-w><c-p>' : '<Nop'
+nmap <silent> cp :let @+=substitute(expand("%:p"), "\\", "/", "g")<cr>
 nmap <leader>v :e $MYVIMRC<cr>
 nmap Y y$
 imap <c-r><c-r> <c-r>"
 imap <c-r><space> <c-r>+
 map <space> "+
+
+function SetCOpts()
+	setlocal tabstop=8
+	setlocal colorcolumn=80
+	setlocal softtabstop=8
+	setlocal shiftwidth=8
+	setlocal noexpandtab
+	setlocal wrap
+endfunction

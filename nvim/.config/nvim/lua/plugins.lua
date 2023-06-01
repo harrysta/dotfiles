@@ -46,6 +46,7 @@ return packer.startup(function()
 	-- lsp
 	use 'neovim/nvim-lspconfig'
 	use 'williamboman/nvim-lsp-installer'
+	use 'Exafunction/codeium.vim'
 	if str then
 		require('packer').sync()
 	end
