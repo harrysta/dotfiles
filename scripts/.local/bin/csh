@@ -1,0 +1,192 @@
+#!/bin/sh
+
+case "$(uname -s)" in
+	Linux*)  curr_os=linux;;
+	Darwin*) curr_os=macos;;
+	CYGWIN*) curr_os=windows;;
+	MINGW*)  curr_os=windows;;
+	MSYS*)   curr_os=windows;;
+	*)
+		printf "Unknown OS: %s\n" "$(uname -s)"
+		exit 1
+		;;
+esac
+
+func_err() {
+	printf "Error: %b\n" "$*" >&2
+	exit 1
+}
+
+# check if valid project file
+
+if [ -e "CMakeLists.txt" ]; then
+	if command -v "cmake" >/dev/null 2>&1; then
+		proj_type="cmake"
+	else
+		func_err "Project is built with cmake, but cmake is not installed."
+	fi
+
+elif [ -e "meson.build" ]; then
+	if command -v "meson" >/dev/null 2>&1; then
+		proj_type="meson"
+	else
+		func_err "Project is built with meson, but meson is not installed."
+	fi
+
+else
+	func_err "Unknown project type.\n" \
+		"The directory should contain a config file to determine which" \
+		"build system to use."
+fi
+
+func_setup_win() {
+	if [ ! -e "C:/src/vcpkg" ]; then
+		printf "Note: In order to build a project that requires external \
+			libraries, vcpkg is required. Ensure it's sourced in C:/src/vcpkg.\n"
+	fi
+
+	cmake -B "build" -S "." \
+		-DCMAKE_TOOLCHAIN_FILE="C:/src/vcpkg/scripts/buildsystems/vcpkg.cmake"
+}
+
+func_setup_other() {
+	# clean if previously setup with msvc
+	sln_count=$(ls -l build/*.sln 2>/dev/null | wc -l)
+	if [ $sln_count -ne 0 ]; then
+		func_clean
+	fi
+
+	cmake -B "build" -S "." -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+	rm -f compile_commands.json
+	ln -s build/compile_commands.json .
+}
+
+func_setup() {
+	case "$curr_os" in
+		windows)
+			func_setup_win
+			;;
+		*)
+			func_setup_other
+			;;
+	esac
+}
+
+func_build() {
+	case "$proj_type" in
+		cmake)
+			cmake --build "build" --parallel 12
+			;;
+		meson)
+			;;
+	esac
+}
+
+func_run_cmake() {
+	exec_count=$(grep add_library CMakeLists.txt | wc -l)
+	if [ $exec_count -ne 0 ]; then
+		func_test
+		return 0
+	fi
+
+	exec_name=$(grep add_executable CMakeLists.txt | sed 's/[()]/ /g' \
+		| awk '{ print $2 }')
+
+	if [ $exec_name = "\${PROJECT_NAME}" ]; then
+		exec_name=$(grep project CMakeLists.txt | sed 's/[()]/ /g' \
+			| awk '{ print $2 }')
+	fi
+
+	case "$curr_os" in
+		windows)
+			"./build/Debug/$exec_name.exe"
+			;;
+		*)
+			"./build/$exec_name"
+			;;
+	esac
+}
+
+func_run() {
+	case "$proj_type" in
+		cmake)
+			func_run_cmake
+			;;
+		meson)
+			;;
+	esac
+}
+
+func_clean() {
+	rm -rf build/*
+}
+
+func_install() {
+	case "$proj_type" in
+		cmake)
+			sudo -E cmake --install "build"
+			;;
+		meson)
+			;;
+	esac
+}
+
+func_test() {
+	case "$proj_type" in
+		cmake)
+			if command -v "ctest" >/dev/null 2>&1; then
+				:
+			else
+				func_err "Could not run tests; ctest is not installed."
+			fi
+			ctest --verbose --test-dir build
+			;;
+		meson)
+			;;
+	esac
+}
+
+# print startup
+
+printf "csh (%s, %s)\n" "$curr_os" "$proj_type"
+curr_proj=$(basename "$(pwd)")
+
+# start prompting
+
+while true; do
+	printf "%s\$ " "$curr_proj"
+	read -r user_input
+
+	case "$user_input" in
+		c)
+			func_setup
+			;;
+		b)
+			func_build
+			;;
+		r)
+			func_run
+			;;
+		cb)
+			func_setup && func_build
+			;;
+		br)
+			func_build && func_run
+			;;
+		cbr)
+			func_setup && func_build && func_run
+			;;
+		clean)
+			func_clean
+			;;
+		install)
+			func_install
+			;;
+		test)
+			func_test
+			;;
+		q|Q)
+			exit 0
+			;;
+		esac
+done
