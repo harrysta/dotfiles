@@ -1,67 +1,92 @@
 #!/bin/sh
 
-case "$(uname -s)" in
-	Linux*)  curr_os=linux;;
-	Darwin*) curr_os=macos;;
-	CYGWIN*) curr_os=windows;;
-	MINGW*)  curr_os=windows;;
-	MSYS*)   curr_os=windows;;
-	*)
-		printf "Unknown OS: %s\n" "$(uname -s)"
-		exit 1
-		;;
-esac
+func_yn() {
+	printf "%s (y/n) " "$1"
+	read -r choice
+	case "$choice" in
+		y|Y) ;;
+		*)
+			printf "Aborting.\n"
+			exit 1
+			;;
+	esac
+}
 
 func_err() {
 	printf "Error: %b\n" "$*" >&2
 	exit 1
 }
 
-# check if valid project file
-
-if [ -e "CMakeLists.txt" ]; then
-	if command -v "cmake" >/dev/null 2>&1; then
-		proj_type="cmake"
+func_append_type() {
+	if [ "$proj_types" = "" ]; then
+		proj_types="$*"
 	else
-		func_err "Project is built with cmake, but cmake is not installed."
+		proj_types="$proj_types:$*"
 	fi
-
-elif [ -e "meson.build" ]; then
-	if command -v "meson" >/dev/null 2>&1; then
-		proj_type="meson"
-	else
-		func_err "Project is built with meson, but meson is not installed."
-	fi
-
-else
-	func_err "Unknown project type.\n" \
-		"The directory should contain a config file to determine which" \
-		"build system to use."
-fi
-
-func_setup_win() {
-	if [ ! -e "C:/src/vcpkg" ]; then
-		printf "Note: In order to build a project that requires external \
-			libraries, vcpkg is required. Ensure it's sourced in C:/src/vcpkg.\n"
-	fi
-
-	cmake -B "build" -S "." \
-		-DCMAKE_TOOLCHAIN_FILE="C:/src/vcpkg/scripts/buildsystems/vcpkg.cmake"
 }
 
-func_setup_other() {
-	# clean if previously setup with msvc
-	sln_count=$(ls -l build/*.sln 2>/dev/null | wc -l)
-	if [ $sln_count -ne 0 ]; then
-		func_clean
-	fi
+func_init() {
+	# TODO ask the project type
+	echo $1
+	case "$1" in
+		"cmake")
+			echo "initialising cmake..."
+		;;
+		"meson")
+			echo "initialising meson..."
+		;;
+		*)
+		func_err "This build system is not supported."
+		;;
+	esac
+}
 
-	cmake -B "build" -S "." -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-	rm -f compile_commands.json
-	ln -s build/compile_commands.json .
+func_setup_win() {
+	case "$proj_type" in
+		cmake)
+			if [ ! -e "C:/src/vcpkg" ]; then
+				printf "Note: In order to build a project that requires external \
+					libraries, vcpkg is required. Ensure it's sourced in C:/src/vcpkg.\n"
+			fi
+
+			cmake -B "build" -S "." \
+				-DCMAKE_TOOLCHAIN_FILE="C:/src/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
+			;;
+		meson)
+			meson setup build
+			;;
+	esac
+}
+
+
+func_setup_other() {
+	case "$proj_type" in
+		cmake)
+			# clean if previously setup with msvc
+			sln_count="$(ls -l build/*.sln 2>/dev/null | wc -l)"
+			if [ $sln_count -ne 0 ]; then
+				func_clean
+			fi
+
+			cmake -B "build" -S "." -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+			rm -f compile_commands.json
+			ln -s build/compile_commands.json .
+			;;
+		meson)
+			meson setup build
+	esac
 }
 
 func_setup() {
+	if [ ! -d "build" ]; then
+		if [ -e "build" ]; then
+			printf "Error: failed to begin setup. Build is not a path.\n"
+			return
+		fi
+		mkdir "./build"
+	fi
+
 	case "$curr_os" in
 		windows)
 			func_setup_win
@@ -78,6 +103,19 @@ func_build() {
 			cmake --build "build" --parallel 12
 			;;
 		meson)
+			meson compile -C build
+			;;
+		cc)
+			# TODO improve this; needs includes and libraries as well
+			files=$(find . -type f -name "*.c")
+			cc -o "./build/output" $files
+			;;
+		g++)
+			files=$(find . -type f \( -name "*.c" -o -name "*.cc" -o -name "*.cxx" -o -name "*.cpp" \))
+			g++ -o "./build/output" $files
+			;;
+		make)
+			make
 			;;
 	esac
 }
@@ -89,13 +127,34 @@ func_run_cmake() {
 		return 0
 	fi
 
-	exec_name=$(grep add_executable CMakeLists.txt | sed 's/[()]/ /g' \
+	exec_name=$(grep add_executable CMakeLists.txt | head -1 | sed 's/[()]/ /g' \
 		| awk '{ print $2 }')
 
 	if [ $exec_name = "\${PROJECT_NAME}" ]; then
-		exec_name=$(grep project CMakeLists.txt | sed 's/[()]/ /g' \
+		exec_name=$(grep project CMakeLists.txt | head -1 | sed 's/[()]/ /g' \
 			| awk '{ print $2 }')
 	fi
+
+	case "$curr_os" in
+		windows)
+			"./build/Debug/$exec_name.exe"
+			;;
+		*)
+			"./build/$exec_name"
+			;;
+	esac
+}
+
+func_run_meson() {
+	exec_name=$(grep executable meson.build | sed 's/[()]/ /g' \
+		| awk '{ print $2 }' | tr -cd '[:alnum:][:blank:]')
+
+	if [ $exec_name = "\${PROJECT_NAME}" ]; then
+		exec_name=$(grep project meson.build | sed 's/[()]/ /g' \
+			| awk '{ print $2 }')
+	fi
+
+	echo $exec_name
 
 	case "$curr_os" in
 		windows)
@@ -113,6 +172,7 @@ func_run() {
 			func_run_cmake
 			;;
 		meson)
+			func_run_meson
 			;;
 	esac
 }
@@ -146,10 +206,96 @@ func_test() {
 	esac
 }
 
+# -----------------------------------------------------------------------------
+
+# find OS
+
+case "$(uname -s)" in
+	Linux*)  curr_os=linux;;
+	Darwin*) curr_os=macos;;
+	CYGWIN*) curr_os=windows;;
+	MINGW*)  curr_os=windows;;
+	MSYS*)   curr_os=windows;;
+	*)
+		printf "Unknown OS: %s\n" "$(uname -s)"
+		exit 1
+		;;
+esac
+
+proj_types=""
+
+# search for files of build systems
+
+if [ -e "CMakeLists.txt" ]; then
+	func_append_type "cmake"
+fi
+
+if [ -e "meson.build" ]; then
+	func_append_type "meson"
+fi
+
+if [ -e "Makefile" ]; then
+	func_append_type "make"
+fi
+
+# handle depending on count
+
+proj_type_count=$(echo "$proj_types" | tr ":" "\n" | awk NF | wc -l)
+case "$proj_type_count" in
+	0)
+		cpp_files=$(find . -type f \( -name "*.cc" -o -name "*.cxx" -o -name "*.cpp" \))
+
+		if [ -n "$cpp_files" ]; then
+			proj_type="g++"
+		else
+			proj_type="cc"
+		fi
+		;;
+	1)
+		proj_type="$proj_types"
+		;;
+	*)
+		printf "Multiple build systems found. Choose 1-%s ('q' to quit):\n" "$proj_type_count"
+		idx=1
+		for type in $(echo "$proj_types" | tr ":" "\n"); do
+			printf "%s) %s\n" "$idx" "$type"
+			idx=$(($idx + 1))
+		done
+		printf "> "
+		read -r user_input
+		case "$user_input" in
+			1|2|3|4|5|6|7|8)
+				proj_type=$(echo "$proj_types" | tr ":" "\n" | awk NF | sed -n "$user_input"p)
+				;;
+			q|Q)
+				printf "Aborting.\n"
+				exit 1
+				;;
+			*)
+				func_err "Invalid input."
+				;;
+		esac
+			;;
+esac
+
+if ! command -v "$proj_type" >/dev/null 2>&1; then
+	printf "Error: Project is built with %s, but %s is not installed.\n" "$proj_type" "$proj_type"
+	exit 1
+fi
+
 # print startup
 
 printf "csh (%s, %s)\n" "$curr_os" "$proj_type"
 curr_proj=$(basename "$(pwd)")
+
+# read config
+
+if [ -e ".csh" ]; then
+	while IFS= read -r line; do
+		eval "$line"
+	done < .csh
+fi
+
 
 # start prompting
 
@@ -158,6 +304,9 @@ while true; do
 	read -r user_input
 
 	case "$user_input" in
+		init)
+			func_init
+			;;
 		c)
 			func_setup
 			;;
@@ -187,6 +336,9 @@ while true; do
 			;;
 		q|Q)
 			exit 0
+			;;
+		*)
+			printf "csh: command not found\n"
 			;;
 		esac
 done
