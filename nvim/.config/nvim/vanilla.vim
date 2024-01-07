@@ -29,7 +29,8 @@ set noswapfile " undofiles make these pointless
 set completeopt=menuone,noselect " always show menu for completion
 set foldopen-=block " disable opening folds using block navigation
 set list " show tabs and trailing spaces
-set listchars=nbsp:+,tab:>\ ,trail:- " non-breaking spaces, tabs, and spaces
+set listchars=nbsp:+,tab:\▎\ ,trail:⋅ " non-breaking spaces, tabs, and spaces
+set cinoptions=l1 " align case label when it has a body
 autocmd Filetype * set formatoptions-=cro " disable auto-commenting new lines under commented ones
 autocmd Filetype,BufNewFile,BufRead *.c,*.h,*.cpp :call SetCOpts()
 autocmd FileType,BufNewFile,BufRead markdown setlocal nocindent
@@ -49,6 +50,10 @@ nmap Y y$
 imap <c-r><c-r> <c-r>"
 imap <c-r><space> <c-r>+
 map <space> "+
+
+" recapture visual when indenting
+vnoremap < <gv
+vnoremap > >gv
 
 function SetCOpts()
 	setlocal tabstop=8

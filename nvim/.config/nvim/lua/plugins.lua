@@ -16,9 +16,8 @@ return packer.startup(function()
 	use 'nvim-lua/popup.nvim'
 	use 'kyazdani42/nvim-web-devicons'
 	use 'nvim-treesitter/nvim-treesitter'
+	use 'nvim-treesitter/nvim-treesitter-context'
 	use 'lukas-reineke/indent-blankline.nvim'
-	use 'lewis6991/impatient.nvim'
-	use 'dstein64/vim-startuptime'
 	-- utilities
 	use 'inkarkat/vim-ReplaceWithRegister'
 	use 'tpope/vim-surround'
@@ -26,7 +25,6 @@ return packer.startup(function()
 	use 'tpope/vim-eunuch'
 	use 'tpope/vim-fugitive'
 	use 'qpkorr/vim-bufkill'
-	use 'harrysta/vim-sysout'
 	use 'numToStr/Comment.nvim'
 	use 'JoosepAlviste/nvim-ts-context-commentstring'
 	use 'windwp/nvim-ts-autotag'
@@ -46,7 +44,6 @@ return packer.startup(function()
 	-- lsp
 	use 'neovim/nvim-lspconfig'
 	use 'williamboman/nvim-lsp-installer'
-	use 'Exafunction/codeium.vim'
 	if str then
 		require('packer').sync()
 	end
