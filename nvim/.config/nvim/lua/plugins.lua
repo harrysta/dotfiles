@@ -14,7 +14,6 @@ return packer.startup(function()
 	use 'wbthomason/packer.nvim'
 	use 'nvim-lua/plenary.nvim'
 	use 'nvim-lua/popup.nvim'
-	use 'kyazdani42/nvim-web-devicons'
 	use 'nvim-treesitter/nvim-treesitter'
 	use 'nvim-treesitter/nvim-treesitter-context'
 	use 'lukas-reineke/indent-blankline.nvim'
