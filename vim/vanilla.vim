@@ -1,8 +1,3 @@
-let s:curr_file = expand("<sfile>:h")
-function Source(s)
-  execute 'source ' .. s:curr_file .. '/' .. a:s
-endfunction
-
 function SetCOpts()
   setlocal tabstop=8
   setlocal colorcolumn=80
@@ -20,8 +15,10 @@ endfunction
 
 execute 'set path+=' . fnamemodify(expand('%'), ':h') . '/**'
 runtime macros/matchit.vim " jump between matching tags
-call Source('settings.vim')
-call Source('mappings.vim')
+
+let s:curr_file = expand("<sfile>:h")
+execute 'source ' .. s:curr_file .. '/settings.vim'
+execute 'source ' .. s:curr_file .. '/mappings.vim'
 
 augroup VanillaGroup
   autocmd!

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# NAME
+#   fn_os - Print a string to stdout that represents the operating system name.
+#
+# SYNOPSIS
+#   fn_os
+#
+# DESCRIPTION
+#   This script utilizes the "uname" command and prints either "mac", "win", or
+#   "linux" to standard output, since the output by itself is different on windows,
+#   depending on which compatability layer the shell is running in (mingw, msys, etc).
+#
+case "$(uname -s)" in
+  Darwin)   printf "mac\n"   ;;
+  Linux)    printf "linux\n" ;;
+  CYGWIN*)  printf "win\n"   ;;
+  MINGW*)   printf "win\n"   ;;
+  MSYS*)    printf "win\n"   ;;
+  Windows*) printf "win\n"   ;;
+  *)        printf "?\n"     ;;
+esac
+
+exit 0

@@ -7,6 +7,7 @@ set ruler " show line and column number
 set nowrap " don't wrap lines overflowing screen
 set splitright
 set splitbelow
+set showcmd
 
 set tabstop=2 " tab equals to 2 spaces
 set softtabstop=2 " tabstop but for editing?
@@ -28,14 +29,10 @@ set nobackup " don't create backup files
 set noswapfile " undofiles make these pointless
 set nowritebackup " don't write backup files
 set undofile " persist undo tree
+set undodir=$XDG_STATE_HOME/vim/undodir
 
 set updatetime=750 " time until update
 set matchpairs+=<:> " navigate around tag edges with %
 set shortmess+=c " don't show prompts often for completion
 set completeopt=menuone,noselect " always show menu for completion
 set foldopen-=block " disable opening folds using block navigation
-
-if executable('rg')
-  set grepformat="%f:%l:%c:%m,%f:%l:%m"
-  set grepprg ="rg --vimgrep --no-heading --smart-case"
-endif

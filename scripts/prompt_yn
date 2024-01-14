@@ -1,0 +1,57 @@
+#!/bin/sh
+
+# NAME
+#   fn_prompt_yn - Prompt the user for a "yes/no" option.
+#
+# SYNOPSIS
+#   fn_prompt_yn PROMPT [EXIT_CODE]
+#
+# DESCRIPTION
+#   Writes the PROMPT to standard output, followed by a "(y/n): ", then reads a
+#   line from input. This is repeated until the line is equal to a "yes" or "no"
+#   representation: "y" "yes", "n", or "no". The number 0 is returned for "yes"
+#   and 1 for "no".
+#
+#   If the optional EXIT_CODE is provided, the script calling this function exits
+#   with status EXIT_CODE when the user choses "no".
+#
+# EXAMPLES
+#   Print a message if the return code is 0.
+#
+#     $ fn_prompt_yn "Continue?"
+#     $ result="$?"
+#     $ if [ "$result" -eq 0 ]; then
+#     $   echo "You chose 'yes'."
+#     $ fi
+#
+#   Ensure the user wants to continue, otherwise exit the script.
+#
+#     $ fn_prompt_yn "Continue?" 1
+#
+if [ "$#" -eq 0 ]; then
+  printf "Usage: fn_prompt_yn PROMPT [EXIT_CODE]\n"
+  exit 2
+fi
+
+prompt="$1"
+exit_code="$2"
+
+while true; do
+  printf "%s (y/n): " "$prompt"
+  read -r ans
+
+  case "$ans" in
+    [Yy]|[Yy][Ee][Ss]) exit 0;;
+    [Nn]|[Nn][Oo])
+      if [ -n "$exit_code" ] && [ "$exit_code" -ne 0 ]; then
+        printf "Exiting.\n"
+        exit "$exit_code"
+      else 
+        exit 1
+      fi
+      ;;
+    * ) ;;
+  esac
+done
+
+exit 0

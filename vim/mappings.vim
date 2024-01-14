@@ -38,13 +38,14 @@ nnoremap P [p
 vnoremap < <gv
 vnoremap > >gv
 
+" switch buffers
+nnoremap <c-b> :ls<cr>:b<space>
+
 " clipboard register
 imap <c-r><space> <c-r>+
 imap <c-r><c-r> <c-r>"
 map <leader><space> "+
 
-nnoremap <silent> <expr> <c-j> &buftype ==# 'quickfix' ? ':cnext<cr><c-w><c-p>' : '<Nop>'
-nnoremap <silent> <expr> <c-k> &buftype ==# 'quickfix' ? ':cprevious<cr><c-w><c-p>' : '<Nop'
 nnoremap <leader>e :call OpenFileExplorer()<cr>
-nmap <leader>cp :call CopyFilepathToClipboard()<cr>
-nmap <leader>v :e $MYVIMRC<cr>
+nnoremap <leader>cp :call CopyFilepathToClipboard()<cr>
+nnoremap <leader>v :e $MYVIMRC<cr>
