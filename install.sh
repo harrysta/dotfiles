@@ -188,7 +188,7 @@ if [ "$profile_config" -eq 1 ]; then
 
   fn_remove_sh_lines "$profile_path"
   cat << EOF >> "$profile_path"
-export DOTFILES="/home/harry/dotfiles" # $repos_str
+export DOTFILES="$DOTFILES" # $repos_str
 export PATH="\$PATH:\$DOTFILES/scripts" # $repos_str
 source \$DOTFILES/bash/profile.sh # $repos_str
 # $repos_str: place custom exports here
