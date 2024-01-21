@@ -56,6 +56,8 @@ fn_alias_cd "mus"
 
 # list usage
 alias lu="find . -maxdepth 1 -type d ! -path . -print | xargs du -sh | sort -rh"
+alias s='cd $(find $SRC/* -mindepth 1 -maxdepth 1 -type d | fzf)'
+alias j="pst | jq | bat --language json"
 
 # rm, rmdir
 alias rm="rm -i"
@@ -76,13 +78,17 @@ case "$(getos)" in
     if command -v "gls" &> /dev/null; then
       alias ls="gls -Fv --color=auto --group-directories-first"
     fi
-    alias xcp="pbcopy <"
     alias gdb="lldb"
+    alias cpy="pbcopy <"
+    alias pst="pbpaste"
     ;;
   linux)
-    alias xcp="xclip -sel c <"
+    alias cpy="xclip -sel c <"
+    alias pst="xclip -o -selection clipboard"
     ;;
   win)
     alias hosts="cat \$SYSTEMDRIVE/Windows/System32/drivers/etc/hosts"
+    alias cpy='echo "No idea"'
+    alias pst="powershell.exe get-clipboard"
     ;;
 esac

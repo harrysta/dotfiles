@@ -29,7 +29,7 @@ set nobackup " don't create backup files
 set noswapfile " undofiles make these pointless
 set nowritebackup " don't write backup files
 set undofile " persist undo tree
-set undodir=$XDG_STATE_HOME/vim/undodir
+set undodir=$XDG_STATE_HOME/vim/undo
 
 set updatetime=750 " time until update
 set matchpairs+=<:> " navigate around tag edges with %
