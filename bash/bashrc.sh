@@ -6,11 +6,14 @@ esac
 
 shopt -s histappend
 shopt -s checkwinsize
-eval "$(dircolors -b)"
 export color_prompt=
 
 if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
   export color_prompt=yes
+fi
+
+if command -v "dircolors" > /dev/null 2>&1; then
+  eval "$(dircolors -b)"
 fi
 
 HISTSIZE=1000
@@ -75,7 +78,7 @@ fi
 
 case "$(getos)" in
   mac)
-    if command -v "gls" &> /dev/null; then
+    if command -v "gls" > /dev/null 2>&1; then
       alias ls="gls -Fv --color=auto --group-directories-first"
     fi
     alias gdb="lldb"

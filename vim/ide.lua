@@ -84,7 +84,7 @@ require("lazy").setup({
     "nvim-telescope/telescope.nvim",
     keys = {
       { "<c-p>", "<cmd>Telescope find_files<cr>" },
-      --[[ { "<c-f>", "<cmd>Telescope live_grep<cr>" }, ]]
+      { "<c-f>", "<cmd>Telescope live_grep<cr>" },
       { "<c-b>", "<cmd>Telescope buffers<cr>" },
       { "<c-t>", "<cmd>Telescope<cr>" },
     },
