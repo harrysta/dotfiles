@@ -21,11 +21,11 @@ HISTFILESIZE=2000
 HISTCONTROL=ignoredups
 
 GREEN="\e[1;32m"
-YELLOW="\e[33m"
+YELLOW="\e[1;33m"
 NC="\e[0m"
 
 LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
-PS1="\[$GREEN\]\u@\h:\[$YELLOW\]\w\$\[$NC\] "
+PS1="${GREEN}\u@\h:${YELLOW}\w\$${NC} "
 
 unset GREEN
 unset YELLOW
