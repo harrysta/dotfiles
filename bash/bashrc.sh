@@ -46,7 +46,7 @@ alias mus="cd \$HOME/Music"
 alias src="cd \$SRC"
 
 fn_alias_cd() {
-  if [ -d "$1" ]; then
+  if [ -d "$HOME/$1" ]; then
     alias "$1"="cd \$HOME/$1"
   fi
 }
