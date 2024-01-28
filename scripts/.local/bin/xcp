@@ -1,9 +1,0 @@
-#!/bin/sh
-
-if [ $# -ne 1 ]; then
-	echo "No input specified"
-	exit 1
-fi
-xclip -sel c < "$1"
-
-exit $?

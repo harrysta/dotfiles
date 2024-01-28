@@ -5,6 +5,7 @@ let mapleader = " "
 set number " show absolute line numbers
 set ruler " show line and column number
 set nowrap " don't wrap lines overflowing screen
+set backspace=indent,eol,start " fix backspace in mintty
 set splitright
 set splitbelow
 set showcmd

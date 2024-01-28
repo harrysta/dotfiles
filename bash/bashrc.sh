@@ -59,7 +59,7 @@ fn_alias_cd "mus"
 
 # list usage
 alias lu="find . -maxdepth 1 -type d ! -path . -print | xargs du -sh | sort -rh"
-alias s='cd $(find $SRC/* -mindepth 1 -maxdepth 1 -type d | fzf)'
+alias s='cd $(find $SRC/* -maxdepth 1 -type d | fzf)'
 alias j="pst | jq | bat --language json"
 
 # rm, rmdir
