@@ -1,343 +1,258 @@
 #!/bin/sh
 
-func_yn() {
-	printf "%s (y/n) " "$1"
-	read -r choice
-	case "$choice" in
-		y|Y) ;;
-		*)
-			printf "Aborting.\n"
-			exit 1
-			;;
-	esac
+# TODO remove: will be moved to bat
+# fn_setup_win() {
+# 	case "$proj_type" in
+# 		cmake)
+# 			if [ ! -e "$SRC/lib/vcpkg" ]; then
+# 				printf "Note: In order to build a project that requires external \
+# 					libraries, vcpkg is required. Ensure it's sourced in $SRC/lib/vcpkg.\n"
+# 			fi
+# 
+# 			cmake -B "build" -S "." \
+# 				-DCMAKE_TOOLCHAIN_FILE="$SRC/lib/vcpkg/scripts/buildsystems/vcpkg.cmake"
+# 
+# 			;;
+# 		meson)
+# 			meson setup build
+# 			;;
+# 	esac
+# }
+
+if [ -e ".ccli" ]; then
+  printf "Sourcing .ccli\n"
+  . "./.ccli"
+fi
+
+IFS=','
+# entries are split by comma in the dict below
+btool_dict="cmake:CMakeLists.txt,meson:meson.build,make:Makefile"
+
+fn_err() {
+  printf "Error: %s\n" "$*" >&2
+  exit 1
 }
 
-func_err() {
-	printf "Error: %b\n" "$*" >&2
-	exit 1
+if [ -n "$BUILD_TOOL_NAME" ]; then
+
+  printf -- "-- Validating build tool \"%s\"\n" "$BUILD_TOOL_NAME"
+
+  for entry in $btool_dict; do
+    name="${entry%%:*}"
+    file="${entry#*:}"
+
+    if [ "$name" = "$BUILD_TOOL_NAME" ]; then
+      break
+    fi
+
+    name=
+    file=
+  done
+
+  if [ -z "$name" ]; then
+    fn_err "\"$BUILD_TOOL_NAME\" was specified, but is not a valid build tool."
+  elif [ ! -e "$file" ]; then
+    fn_err "\"$BUILD_TOOL_NAME\" was specified, but its build description file \"$file\" does not exist."
+  fi
+
+  printf -- "-- Detected \"%s\". Build tool \"%s\" is valid\n" "$file" "$name"
+
+else
+  printf -- "-- Guessing build tool\n"
+
+  for entry in $btool_dict; do
+    name="${entry%%:*}"
+    file="${entry#*:}"
+
+    if [ -e "$file" ]; then
+      break
+    fi
+
+    name=
+    file=
+  done
+
+  if [ -n "$file" ]; then
+    printf -- "-- Detected \"%s\". Assuming \"%s\"\n" "$file" "$name"
+    BUILD_TOOL_NAME="$name"
+  else
+    # TODO: fallback to plain cc
+    fn_err "Failed to guess build tool."
+  fi
+fi
+
+unset IFS
+
+printf "Preparing executable\n"
+
+getparam() {
+  cut -d "(" -f2 | cut -d ")" -f1 | awk -v idx="$1" '{print $idx}'
 }
 
-func_append_type() {
-	if [ "$proj_types" = "" ]; then
-		proj_types="$*"
-	else
-		proj_types="$proj_types:$*"
-	fi
-}
+case "$BUILD_TOOL_NAME" in
+  cmake)
+    exec_count=$(grep -c add_library "$file")
+    if [ "$exec_count" -ne 0 ]; then
+      fn_test
+      return
+    fi
 
-func_init() {
-	# TODO ask the project type
-	echo $1
-	case "$1" in
-		"cmake")
-			echo "initialising cmake..."
-		;;
-		"meson")
-			echo "initialising meson..."
-		;;
-		*)
-		func_err "This build system is not supported."
-		;;
-	esac
-}
+    exec_name=$(grep add_executable "$file" | head -1 | getparam 1)
 
-func_setup_win() {
-	case "$proj_type" in
-		cmake)
-			if [ ! -e "$SRC/lib/vcpkg" ]; then
-				printf "Note: In order to build a project that requires external \
-					libraries, vcpkg is required. Ensure it's sourced in $SRC/lib/vcpkg.\n"
-			fi
+    if [ "$exec_name" = "\${PROJECT_NAME}" ]; then
+      exec_name=$(grep project "$file" | head -1 | getparam 1)
+    fi
 
-			cmake -B "build" -S "." \
-				-DCMAKE_TOOLCHAIN_FILE="$SRC/lib/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    EXECUTABLE="./build/$exec_name"
+    ;;
 
-			;;
-		meson)
-			meson setup build
-			;;
-	esac
-}
+  meson)
+    exec_name=$(grep executable meson.build | sed 's/[()]/ /g' \
+      | awk '{ print $2 }' | tr -cd '[:alnum:][:blank:]')
 
+    if [ "$exec_name" = "\${PROJECT_NAME}" ]; then
+      exec_name=$(grep project meson.build | sed 's/[()]/ /g' \
+        | awk '{ print $2 }')
+    fi
 
-func_setup_other() {
-	case "$proj_type" in
-		cmake)
-			# clean if previously setup with msvc
-			sln_count="$(ls -l build/*.sln 2>/dev/null | wc -l)"
-			if [ $sln_count -ne 0 ]; then
-				func_clean
-			fi
-
-			cmake -B "build" -S "." -DCMAKE_EXPORT_COMPILE_COMMANDS=1
-			rm -f compile_commands.json
-			ln -s build/compile_commands.json .
-			;;
-		meson)
-			meson setup build
-	esac
-}
-
-func_setup() {
-	if [ ! -d "build" ]; then
-		if [ -e "build" ]; then
-			printf "Error: failed to begin setup. Build is not a path.\n"
-			return
-		fi
-		mkdir "./build"
-	fi
-
-	case "$curr_os" in
-		windows)
-			func_setup_win
-			;;
-		*)
-			func_setup_other
-			;;
-	esac
-}
-
-func_build() {
-	case "$proj_type" in
-		cmake)
-			cmake --build "build" --parallel 12
-			;;
-		meson)
-			meson compile -C build
-			;;
-		cc)
-			# TODO improve this; needs includes and libraries as well
-			files=$(find . -type f -name "*.c")
-			cc -o "./build/output" $files
-			;;
-		g++)
-			files=$(find . -type f \( -name "*.c" -o -name "*.cc" -o -name "*.cxx" -o -name "*.cpp" \))
-			g++ -o "./build/output" $files
-			;;
-		make)
-			make
-			;;
-	esac
-}
-
-func_run_cmake() {
-	exec_count=$(grep add_library CMakeLists.txt | wc -l)
-	if [ $exec_count -ne 0 ]; then
-		func_test
-		return 0
-	fi
-
-	exec_name=$(grep add_executable CMakeLists.txt | head -1 | sed 's/[()]/ /g' \
-		| awk '{ print $2 }')
-
-	if [ $exec_name = "\${PROJECT_NAME}" ]; then
-		exec_name=$(grep project CMakeLists.txt | head -1 | sed 's/[()]/ /g' \
-			| awk '{ print $2 }')
-	fi
-
-	case "$curr_os" in
-		windows)
-			"./build/Debug/$exec_name.exe"
-			;;
-		*)
-			"./build/$exec_name" "$cmdline_args"
-			;;
-	esac
-}
-
-func_run_meson() {
-	exec_name=$(grep executable meson.build | sed 's/[()]/ /g' \
-		| awk '{ print $2 }' | tr -cd '[:alnum:][:blank:]')
-
-	if [ $exec_name = "\${PROJECT_NAME}" ]; then
-		exec_name=$(grep project meson.build | sed 's/[()]/ /g' \
-			| awk '{ print $2 }')
-	fi
-
-	echo $exec_name
-
-	case "$curr_os" in
-		windows)
-			"./build/Debug/$exec_name.exe"
-			;;
-		*)
-			"./build/$exec_name"
-			;;
-	esac
-}
-
-func_run() {
-	case "$proj_type" in
-		cmake)
-			func_run_cmake
-			;;
-		meson)
-			func_run_meson
-			;;
-	esac
-}
-
-func_clean() {
-	rm -rf build/*
-}
-
-func_install() {
-	case "$proj_type" in
-		cmake)
-			sudo -E cmake --install "build"
-			;;
-		meson)
-			;;
-	esac
-}
-
-func_test() {
-	case "$proj_type" in
-		cmake)
-			if command -v "ctest" >/dev/null 2>&1; then
-				:
-			else
-				func_err "Could not run tests; ctest is not installed."
-			fi
-			ctest --verbose --test-dir build
-			;;
-		meson)
-			;;
-	esac
-}
-
-# -----------------------------------------------------------------------------
-
-# find OS
-
-case "$(uname -s)" in
-	Linux*)  curr_os=linux;;
-	Darwin*) curr_os=macos;;
-	CYGWIN*) curr_os=windows;;
-	MINGW*)  curr_os=windows;;
-	MSYS*)   curr_os=windows;;
-	*)
-		printf "Unknown OS: %s\n" "$(uname -s)"
-		exit 1
-		;;
+    EXECUTABLE="./build/$exec_name"
+    ;;
 esac
 
-proj_types=""
+printf "\nC/C++ Command Line Interface on %s\n" "$(uname -s)" 
+prompt="$(basename "$(pwd)")> "
 
-# search for files of build systems
+fn_cmd() {
+  cmd="$1"
+  MAGENTA='\e[35m'
+  NC='\e[0m'
 
-if [ -e "CMakeLists.txt" ]; then
-	func_append_type "cmake"
-fi
+  printf "\n${MAGENTA}%s${NC}\n" "$cmd"
+  command $cmd
+}
 
-if [ -e "meson.build" ]; then
-	func_append_type "meson"
-fi
+fn_setup() {
+  if [ ! -d "build" ]; then
+    if [ -e "build" ]; then
+      printf "Error: Setup failed. \"build\" is not a path.\n"
+      return
+    fi
 
-if [ -e "Makefile" ]; then
-	func_append_type "make"
-fi
+    fn_cmd "mkdir ./build"
+  fi
 
-# handle depending on count
+  case "$BUILD_TOOL_NAME" in
+    cmake)
+      fn_cmd "cmake -B build -S . -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+      fn_cmd "ln -sf ./build/compile_commands.json ./compile_commands.json"
+      ;;
+    meson)
+      fn_cmd "meson setup build"
+      ;;
+  esac
+}
 
-proj_type_count=$(echo "$proj_types" | tr ":" "\n" | awk NF | awk 'END{ print NR }')
-case "$proj_type_count" in
-	0)
-		cpp_files=$(find . -type f \( -name "*.cc" -o -name "*.cxx" -o -name "*.cpp" \))
+fn_build() {
+  case "$BUILD_TOOL_NAME" in
+    cmake)
+      fn_cmd "cmake --build build --parallel 12"
+      ;;
+    meson)
+      fn_cmd "meson compile -C build"
+      ;;
+    make)
+      fn_cmd "make"
+      ;;
+  esac
+}
 
-		if [ -n "$cpp_files" ]; then
-			proj_type="g++"
-		else
-			proj_type="cc"
-		fi
-		;;
-	1)
-		proj_type="$proj_types"
-		;;
-	*)
-		printf "Multiple build systems found. Choose 1-%s ('q' to quit):\n" "$proj_type_count"
-		idx=1
-		for type in $(echo "$proj_types" | tr ":" "\n"); do
-			printf "%s) %s\n" "$idx" "$type"
-			idx=$(($idx + 1))
-		done
-		printf "> "
-		read -r user_input
-		case "$user_input" in
-			1|2|3|4|5|6|7|8)
-				proj_type=$(echo "$proj_types" | tr ":" "\n" | awk NF | sed -n "$user_input"p)
-				;;
-			q|Q)
-				printf "Aborting.\n"
-				exit 1
-				;;
-			*)
-				func_err "Invalid input."
-				;;
-		esac
-			;;
-esac
+fn_run() {
+  fn_cmd "$EXECUTABLE $ARGUMENTS"
+}
 
-if ! command -v "$proj_type" >/dev/null 2>&1; then
-	printf "Error: Project is built with %s, but %s is not installed.\n" "$proj_type" "$proj_type"
-	exit 1
-fi
+fn_debug() {
+  flags=
+  if [ -e .breakpoints ]; then
+    flags="-x .breakpoints"
+  fi
+  fn_cmd "gdb $flags --args $EXECUTABLE $ARGUMENTS"
+}
 
-# print startup
+fn_clean() {
+  fn_cmd "rm -rf build/*"
+}
 
-printf "csh (%s, %s)\n" "$curr_os" "$proj_type"
-curr_proj=$(basename "$(pwd)")
+fn_install() {
+  case "$BUILD_TOOL_NAME" in
+    cmake)
+      fn_cmd "sudo -E cmake --install build"
+      ;;
+    meson)
+      ;;
+  esac
+}
 
-# read config
-
-if [ -e ".csh" ]; then
-	while IFS= read -r line; do
-		eval "$line"
-	done < .csh
-fi
+fn_test() {
+  case "$BUILD_TOOL_NAME" in
+    cmake)
+      if command -v "ctest" > /dev/null 2>&1; then
+        :
+      else
+        fn_err "Could not run tests; ctest is not installed."
+      fi
+      ctest --verbose --test-dir build
+      ;;
+    meson)
+      ;;
+  esac
+}
 
 # start prompting
 
 while true; do
-	printf "%s\$ " "$curr_proj"
+	printf "%s" "$prompt"
 	read -r user_input
 
+  if [ -z "$user_input" ]; then
+    continue
+  fi
+
 	case "$user_input" in
-		init)
-			func_init
-			;;
 		c)
-			func_setup
+			fn_setup
 			;;
 		b)
-			func_build
+			fn_build
 			;;
 		r)
-			func_run
+			fn_run
 			;;
+    d)
+      fn_debug
+      ;;
 		cb)
-			func_setup && func_build
+			fn_setup && fn_build
 			;;
 		br)
-			func_build && func_run
+			fn_build && fn_run
 			;;
 		cbr)
-			func_setup && func_build && func_run
+			fn_setup && fn_build && fn_run
 			;;
-		clean)
-			func_clean
+		cl | clean)
+			fn_clean
 			;;
 		install)
-			func_install
+			fn_install
 			;;
 		test)
-			func_test
+			fn_test
 			;;
 		q|Q)
 			exit 0
 			;;
 		*)
-			printf "csh: command not found\n"
+			printf "%s: command not found\n" "$user_input"
 			;;
 		esac
 done
