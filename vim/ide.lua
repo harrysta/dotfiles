@@ -35,6 +35,7 @@ require("lazy").setup({
   -- utils
   "inkarkat/vim-ReplaceWithRegister",
   "tpope/vim-fugitive",
+  "tpope/vim-repeat",
 
   -- surround
   {
