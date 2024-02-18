@@ -179,7 +179,7 @@ fn_debug() {
 }
 
 fn_clean() {
-  fn_cmd "rm -rf build/*"
+  fn_cmd "rm -rf build"
 }
 
 fn_install() {
