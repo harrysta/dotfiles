@@ -1,37 +1,35 @@
 #!/bin/sh
 
-# TODO remove: will be moved to bat
-# fn_setup_win() {
-# 	case "$proj_type" in
-# 		cmake)
-# 			if [ ! -e "$SRC/lib/vcpkg" ]; then
-# 				printf "Note: In order to build a project that requires external \
-# 					libraries, vcpkg is required. Ensure it's sourced in $SRC/lib/vcpkg.\n"
-# 			fi
-# 
-# 			cmake -B "build" -S "." \
-# 				-DCMAKE_TOOLCHAIN_FILE="$SRC/lib/vcpkg/scripts/buildsystems/vcpkg.cmake"
-# 
-# 			;;
-# 		meson)
-# 			meson setup build
-# 			;;
-# 	esac
-# }
+# .ccli configuration:
+#
+# BUILD_TOOL_NAME - the name of the build tool to build the project.
+# the build tool must be installed on the system to be usable.
+# * cmake
+# * meson
+# * make
+#
+# ARGUMENTS - a string that represents the arguments to be passed when running
+# the built program
+#
+# DEBUGGER - the debugger to use 
+# * gdb
+# * lldb
+
+fn_err() {
+  printf "Error: %s\n" "$*" >&2
+  exit 1
+}
 
 if [ -e ".ccli" ]; then
   printf "Sourcing .ccli\n"
   . "./.ccli"
 fi
 
+# build tool
+
 IFS=','
 # entries are split by comma in the dict below
 btool_dict="cmake:CMakeLists.txt,meson:meson.build,make:Makefile"
-
-fn_err() {
-  printf "Error: %s\n" "$*" >&2
-  exit 1
-}
 
 if [ -n "$BUILD_TOOL_NAME" ]; then
 
@@ -56,6 +54,7 @@ if [ -n "$BUILD_TOOL_NAME" ]; then
   fi
 
   printf -- "-- Detected \"%s\". Build tool \"%s\" is valid\n" "$file" "$name"
+  ccli_btool="$BUILD_TOOL_NAME"
 
 else
   printf -- "-- Guessing build tool\n"
@@ -74,10 +73,51 @@ else
 
   if [ -n "$file" ]; then
     printf -- "-- Detected \"%s\". Assuming \"%s\"\n" "$file" "$name"
-    BUILD_TOOL_NAME="$name"
+    ccli_btool="$name"
   else
     # TODO: fallback to plain cc
     fn_err "Failed to guess build tool."
+  fi
+fi
+
+IFS=":"
+
+# debugger
+
+dbg_arr="gdb:lldb"
+
+if [ -n "$DEBUGGER" ]; then
+  printf -- "-- Validating debugger \"%s\"\n" "$DEBUGGER"
+
+  for dbg in $dbg_arr; do
+    if [ "$dbg" = "$DEBUGGER" ]; then
+      break
+    fi
+    dbg=
+  done
+
+  if [ -z "$dbg" ]; then
+    fn_err "\"$DEBUGGER\" was specified, but it is not a valid debugger."
+  fi
+  
+  printf -- "-- Debugger \"%s\" is valid\n" "$dbg"
+  ccli_dbg="$dbg"
+
+else
+  printf -- "-- Searching for debugger\n"
+
+  for dbg in $dbg_arr; do
+    if command -v "$dbg" > /dev/null 2>&1; then
+      DEBUGGER="$dbg"
+      break
+    fi
+  done
+
+  if [ -z "$DEBUGGER" ]; then
+    printf -- "-- No debugger found\n"
+  else 
+    printf -- "-- Detected debugger \"%s\"\n" "$DEBUGGER"
+    ccli_dbg="$DEBUGGER"
   fi
 fi
 
@@ -89,7 +129,7 @@ getparam() {
   cut -d "(" -f2 | cut -d ")" -f1 | awk -v idx="$1" '{print $idx}'
 }
 
-case "$BUILD_TOOL_NAME" in
+case "$ccli_btool" in
   cmake)
     exec_count=$(grep -c add_library "$file")
     if [ "$exec_count" -ne 0 ]; then
@@ -103,7 +143,7 @@ case "$BUILD_TOOL_NAME" in
       exec_name=$(grep project "$file" | head -1 | getparam 1)
     fi
 
-    EXECUTABLE="./build/$exec_name"
+    ccli_exe="./build/$exec_name"
     ;;
 
   meson)
@@ -115,7 +155,7 @@ case "$BUILD_TOOL_NAME" in
         | awk '{ print $2 }')
     fi
 
-    EXECUTABLE="./build/$exec_name"
+    ccli_exe="./build/$exec_name"
     ;;
 esac
 
@@ -141,7 +181,7 @@ fn_setup() {
     fn_cmd "mkdir ./build"
   fi
 
-  case "$BUILD_TOOL_NAME" in
+  case "$ccli_btool" in
     cmake)
       fn_cmd "cmake -B build -S . -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
       fn_cmd "ln -sf ./build/compile_commands.json ./compile_commands.json"
@@ -153,7 +193,7 @@ fn_setup() {
 }
 
 fn_build() {
-  case "$BUILD_TOOL_NAME" in
+  case "$ccli_btool" in
     cmake)
       fn_cmd "cmake --build build --parallel 12"
       ;;
@@ -167,15 +207,25 @@ fn_build() {
 }
 
 fn_run() {
-  fn_cmd "$EXECUTABLE $ARGUMENTS"
+  fn_cmd "$ccli_exe $ARGUMENTS"
 }
 
 fn_debug() {
   flags=
-  if [ -e .breakpoints ]; then
-    flags="-x .breakpoints"
-  fi
-  fn_cmd "gdb $flags --args $EXECUTABLE $ARGUMENTS"
+  case "$ccli_dbg" in
+    gdb)
+      if [ -e .breakpoints ]; then
+        flags="-x .breakpoints"
+      fi
+      fn_cmd "gdb $flags --args $ccli_exe $ARGUMENTS"
+      ;;
+    lldb)
+      if [ -e .breakpoints ]; then
+        flags="-s .breakpoints"
+      fi
+      fn_cmd "lldb $flags $ccli_exe $ARGUMENTS"
+      ;;
+  esac
 }
 
 fn_clean() {
@@ -183,7 +233,7 @@ fn_clean() {
 }
 
 fn_install() {
-  case "$BUILD_TOOL_NAME" in
+  case "$ccli_btool" in
     cmake)
       fn_cmd "sudo -E cmake --install build"
       ;;
@@ -193,7 +243,7 @@ fn_install() {
 }
 
 fn_test() {
-  case "$BUILD_TOOL_NAME" in
+  case "$ccli_btool" in
     cmake)
       if command -v "ctest" > /dev/null 2>&1; then
         :
@@ -215,6 +265,10 @@ while true; do
 
   if [ -z "$user_input" ]; then
     continue
+  fi
+
+  if [ -e ".ccli" ]; then
+    . "./.ccli"
   fi
 
 	case "$user_input" in
