@@ -133,8 +133,7 @@ case "$ccli_btool" in
   cmake)
     exec_count=$(grep -c add_library "$file")
     if [ "$exec_count" -ne 0 ]; then
-      fn_test
-      return
+      break
     fi
 
     exec_name=$(grep add_executable "$file" | head -1 | getparam 1)
